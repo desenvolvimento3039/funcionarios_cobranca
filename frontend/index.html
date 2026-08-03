@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sistema de Gestão de Funcionários de Cobrança Sicoob - Controle de times, PAs, cobradores e filas.">
+    <title>Sicoob | Gestão de Funcionários de Cobrança</title>
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js for Dashboard Analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="main-header">
+            <div class="logo-area">
+                <i class="fa-solid fa-phone-volume logo-icon"></i>
+                <div class="logo-text">
+                    <h1>Sicoob</h1>
+                    <span>Gestão de Funcionários de Cobrança</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button id="btn-tutorial" class="btn btn-secondary btn-help" title="Tutorial de Como Usar">
+                    <i class="fa-solid fa-circle-question"></i> Como Usar
+                </button>
+                <button id="btn-sync" class="btn btn-primary" title="Sincronizar e inserir novas informações nos bancos LeCom e SicoobSMO">
+                    <i class="fa-solid fa-rotate"></i> Sincronizar Bancos
+                </button>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Cards Resumo -->
+            <section class="stats-grid" id="step-stats">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-label">Total de Funcionários</span>
+                        <span id="stat-total" class="stat-value">0</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon active-icon"><i class="fa-solid fa-people-group"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-label">Times de Cobrança</span>
+                        <span id="stat-times" class="stat-value">0</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fa-solid fa-building-columns"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-label">PAs Atendidos</span>
+                        <span id="stat-pas" class="stat-value">0</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fa-solid fa-list-check"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-label">Filas de Cobrança</span>
+                        <span id="stat-filas" class="stat-value">0</span>
+                    </div>
+                </div>
+                <div class="stat-card" id="card-filas-sem-cobrador" style="cursor: pointer; border-left: 4px solid #ef4444;">
+                    <div class="stat-icon" style="color: #ef4444; background: #fee2e2;"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-label">Filas sem Cobradores</span>
+                        <span id="stat-filas-sem-cobrador" class="stat-value" style="color: #ef4444;">0</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Painel Gráfico & Métricas (Analytics) -->
+            <section class="analytics-container" id="analytics-section">
+                <div class="analytics-header">
+                    <h3><i class="fa-solid fa-chart-pie"></i> Painel Gráfico & Analytics</h3>
+                    <button id="btn-toggle-analytics" class="btn btn-outline" style="padding: 4px 12px; font-size: 12px;">
+                        <i class="fa-solid fa-chevron-up"></i> Ocultar Gráficos
+                    </button>
+                </div>
+                <div class="charts-grid" id="charts-grid-content">
+                    <div class="chart-card">
+                        <h4>Cobradores por Time de Cobrança</h4>
+                        <div class="chart-wrapper">
+                            <canvas id="chart-times"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <h4>Top PAs com Mais Cobradores</h4>
+                        <div class="chart-wrapper">
+                            <canvas id="chart-pas"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <h4>Distribuição de Status (Ativos vs. Inativos)</h4>
+                        <div class="chart-wrapper">
+                            <canvas id="chart-status"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Seção de Ações -->
+            <section class="table-actions-bar">
+                <div class="search-and-filters">
+                    <div class="search-box" id="step-search">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                        <input type="text" id="search-input" placeholder="Buscar por cobrador, matrícula, fila ou time...">
+                    </div>
+                    <div class="filter-row">
+                        <select id="filter-time" class="filter-select">
+                            <option value="">Todos os Times</option>
+                        </select>
+                        <select id="filter-pa" class="filter-select">
+                            <option value="">Todos os PAs</option>
+                        </select>
+                        <select id="filter-status" class="filter-select">
+                            <option value="">Status: Todos</option>
+                            <option value="1">Ativo</option>
+                            <option value="0">Inativo</option>
+                        </select>
+                        <button id="btn-limpar-filtros" class="btn btn-outline" title="Limpar todos os filtros" style="display:none;">
+                            <i class="fa-solid fa-filter-circle-xmark"></i> Limpar
+                        </button>
+                    </div>
+                </div>
+                <div class="right-actions" id="step-actions">
+                    <button id="btn-upload-excel" class="btn btn-secondary" title="Fazer upload de nova planilha Excel">
+                        <i class="fa-solid fa-file-excel"></i> Upload Excel
+                    </button>
+                    <button id="btn-export-csv" class="btn btn-secondary" title="Exportar tabela em CSV">
+                        <i class="fa-solid fa-file-csv"></i> Exportar CSV
+                    </button>
+                    <button id="btn-add-substituto" class="btn btn-secondary" style="border-color: var(--accent-color); color: var(--accent-color);">
+                        <i class="fa-solid fa-user-clock"></i> Adicionar Substituto
+                    </button>
+                    <button id="btn-add-item" class="btn btn-success">
+                        <i class="fa-solid fa-plus"></i> Novo Funcionário
+                    </button>
+                </div>
+            </section>
+
+            <!-- Tabela de Funcionários de Cobrança -->
+            <section class="table-container" id="step-table">
+                <table id="cobranca-table">
+                    <thead>
+                        <tr>
+                            <th class="th-sortable" data-col="id">ID <i class="fa-solid fa-sort sort-icon"></i></th>
+                            <th class="th-sortable" data-col="time_cobranca">Time <i class="fa-solid fa-sort sort-icon"></i></th>
+                            <th class="th-sortable" data-col="pa">PA <i class="fa-solid fa-sort sort-icon"></i></th>
+                            <th class="th-sortable" data-col="matricula">Matrícula <i class="fa-solid fa-sort sort-icon"></i></th>
+                            <th class="th-sortable" data-col="cobrador">Cobrador <i class="fa-solid fa-sort sort-icon"></i></th>
+                            <th class="th-sortable" data-col="fila">Fila <i class="fa-solid fa-sort sort-icon"></i></th>
+                            <th>Telefone</th>
+                            <th class="th-sortable" data-col="status">Status <i class="fa-solid fa-sort sort-icon"></i></th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cobranca-tbody">
+                        <tr>
+                            <td colspan="9" class="loading-state">
+                                <i class="fa-solid fa-spinner fa-spin"></i> Carregando funcionários de cobrança...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Barra de Paginação -->
+            <div class="pagination-container">
+                <div class="pagination-info">
+                    Exibindo <span id="page-start">0</span> - <span id="page-end">0</span> de <span id="page-total">0</span> registros
+                </div>
+                <div class="pagination-controls">
+                    <label for="per-page-select">Itens por página:</label>
+                    <select id="per-page-select" class="per-page-select">
+                        <option value="10">10</option>
+                        <option value="25" selected>25</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                    </select>
+                    <button id="btn-prev-page" class="btn btn-secondary btn-icon" disabled><i class="fa-solid fa-chevron-left"></i></button>
+                    <span id="page-current-label">Página 1 de 1</span>
+                    <button id="btn-next-page" class="btn btn-secondary btn-icon" disabled><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal de Resultado de Sincronização -->
+    <div id="sync-result-modal" class="modal">
+        <div class="modal-content" style="max-width:520px;">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-rotate" style="color:var(--accent-color);margin-right:8px;"></i>Resultado da Sincronização</h3>
+                <span class="close-btn" id="close-sync-result-modal">&times;</span>
+            </div>
+            <div id="sync-result-body" style="padding: 8px 0 16px;"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btn-close-sync-result">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Form (Criar/Editar Funcionário) -->
+    <div id="item-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Novo Funcionário de Cobrança</h3>
+                <span class="close-btn" id="close-modal">&times;</span>
+            </div>
+
+            <!-- Alerta de Duplicidade -->
+            <div class="alert-info" style="margin-bottom: 16px;">
+                <div class="alert-icon"><i class="fa-solid fa-circle-info"></i></div>
+                <div class="alert-content">
+                    <strong>Validação de Duplicidades:</strong>
+                    <p>Ao digitar a matrícula ou o nome do cobrador, o sistema buscará registros semelhantes já existentes em tempo real.</p>
+                </div>
+            </div>
+
+            <form id="item-form">
+                <input type="hidden" id="item-id">
+
+                <div class="form-row">
+                    <div class="form-group col-6">
+                        <label for="item-time">Time de Cobrança *</label>
+                        <div class="item-search-wrapper">
+                            <i class="fa-solid fa-people-group item-search-icon"></i>
+                            <input type="text" id="item-time" required maxlength="100"
+                                   placeholder="Nome do time de cobrança..." autocomplete="off">
+                        </div>
+                        <div id="time-suggestions" class="suggestions-container" style="display: none;"></div>
+                    </div>
+                    <div class="form-group col-6">
+                        <label for="item-pa">PA (Ponto de Atendimento) *</label>
+                        <select id="item-pa" class="per-page-select" required>
+                            <option value="">Carregando PAs...</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Campo Busca de Cobrador (fun_funcionario) -->
+                <div class="form-group item-search-group">
+                    <label for="item-cobrador-busca">Buscar Cobrador (tabela fun_funcionario)</label>
+                    <div class="item-search-wrapper">
+                        <i class="fa-solid fa-magnifying-glass item-search-icon"></i>
+                        <input type="text" id="item-cobrador-busca"
+                               placeholder="Digite para buscar cobrador por nome ou matrícula na fun_funcionario..." autocomplete="off">
+                    </div>
+                    <div id="funcionario-suggestions" class="suggestions-container" style="display: none;"></div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-4">
+                        <label for="item-matricula">Matrícula *</label>
+                        <input type="number" id="item-matricula" required min="1"
+                               placeholder="Matrícula...">
+                    </div>
+                    <div class="form-group col-4">
+                        <label for="item-cobrador">Nome do Cobrador *</label>
+                        <input type="text" id="item-cobrador" required maxlength="100"
+                               placeholder="Nome do cobrador...">
+                    </div>
+                    <div class="form-group col-4">
+                        <label for="item-fone">Telefone</label>
+                        <input type="text" id="item-fone" maxlength="50"
+                               placeholder="(XX) XXXXX-XXXX">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-8">
+                        <label for="item-fila">Fila de Cobrança *</label>
+                        <div class="linha-input-wrapper">
+                            <input type="text" id="item-fila" required maxlength="100"
+                                   placeholder="Descrição da fila de cobrança..." autocomplete="off">
+                            <i class="fa-solid fa-chevron-down linha-dropdown-icon" id="fila-dropdown-toggle"></i>
+                        </div>
+                        <div id="fila-suggestions" class="suggestions-container" style="display: none;"></div>
+                    </div>
+                    <div class="form-group col-4">
+                        <label for="item-status">Status *</label>
+                        <select id="item-status" class="per-page-select" required>
+                            <option value="1">Ativo</option>
+                            <option value="0">Inativo</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Substituto Section -->
+                <div class="form-row" style="margin-top: 10px; border-top: 1px solid #e2e8f0; padding-top: 10px;">
+                    <div class="form-group col-12">
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: #0f172a; font-weight: 500;">
+                            <input type="checkbox" id="item-is-substituto" style="width: 18px; height: 18px;"> 
+                            É um cobrador substituto?
+                        </label>
+                    </div>
+                </div>
+                
+                <div id="substituto-fields" style="display: none; background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px dashed #cbd5e1; margin-bottom: 12px;">
+                    <div class="form-group item-search-group">
+                        <label for="item-substituto-de">Substituindo quem? * (Tabela de Cobradores Ativos)</label>
+                        <select id="item-substituto-de" class="per-page-select" style="width: 100%;">
+                            <option value="">Selecione o cobrador original...</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group col-6">
+                            <label for="item-data-inicio">Data Início *</label>
+                            <input type="date" id="item-data-inicio">
+                        </div>
+                        <div class="form-group col-6">
+                            <label for="item-data-fim">Data Fim *</label>
+                            <input type="date" id="item-data-fim">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aviso de dados não salvos -->
+                <div id="aviso-descarte" class="descarte-warning" style="display:none;">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                    <span>Há dados não salvos. Deseja <strong>descartar as alterações</strong>?</span>
+                    <div class="descarte-actions">
+                        <button type="button" id="btn-descartar-confirmar" class="btn btn-danger btn-sm">Descartar</button>
+                        <button type="button" id="btn-descartar-cancelar" class="btn btn-secondary btn-sm">Continuar</button>
+                    </div>
+                </div>
+
+                <!-- Confirmação de Salvamento -->
+                <div id="aviso-confirmar-salvar" class="save-confirm-box" style="display:none;">
+                    <div class="save-confirm-header">
+                        <i class="fa-solid fa-circle-question" style="color: var(--primary-color); font-size: 18px;"></i>
+                        <strong>Confirmar inclusão / alteração do Funcionário?</strong>
+                    </div>
+                    <div class="save-confirm-summary" id="save-confirm-summary-details"></div>
+                    <div class="save-confirm-actions">
+                        <button type="button" id="btn-confirmar-salvar-sim" class="btn btn-success btn-sm"><i class="fa-solid fa-check"></i> Sim, Confirmar</button>
+                        <button type="button" id="btn-confirmar-salvar-nao" class="btn btn-secondary btn-sm"><i class="fa-solid fa-xmark"></i> Voltar / Revisar</button>
+                    </div>
+                </div>
+
+                <div class="modal-footer" id="item-modal-footer">
+                    <button type="button" class="btn btn-secondary" id="btn-cancel-modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="btn-save-item">Salvar Funcionário</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Upload Excel -->
+    <div id="upload-excel-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Upload de Planilha Excel (.xlsx)</h3>
+                <span class="close-btn" id="close-upload-modal">&times;</span>
+            </div>
+            <form id="upload-excel-form">
+                <div class="form-group" style="padding: 16px 0;">
+                    <label for="excel-file-input">Selecione a planilha de Funcionários de Cobrança (.xlsx):</label>
+                    <div style="margin-top: 12px;">
+                        <input type="file" id="excel-file-input" accept=".xlsx, .xls" required
+                               style="padding: 12px; background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 8px; width: 100%; cursor: pointer;">
+                    </div>
+                    <div class="alert-info" style="margin-top: 16px;">
+                        <div class="alert-icon"><i class="fa-solid fa-circle-info"></i></div>
+                        <div class="alert-content">
+                            <strong>Formato esperado:</strong>
+                            <p>Colunas na ordem: <em>Times de cobrança | PA's | Matricula | Cobradores | Filas | Fones</em></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="btn-cancel-upload">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="btn-submit-upload">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Processar Upload & MERGE
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmação de Exclusão -->
+    <div id="confirm-modal" class="modal">
+        <div class="modal-content confirm-modal-content">
+            <div class="modal-header">
+                <h3>Confirmar Exclusão</h3>
+                <span class="close-btn" id="close-confirm-modal">&times;</span>
+            </div>
+            <div class="confirm-body">
+                <i class="fa-solid fa-triangle-exclamation confirm-icon"></i>
+                <p id="confirm-modal-message">Tem certeza de que deseja remover este funcionário das bases LeCom e SicoobSMO?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btn-cancel-confirm">Cancelar</button>
+                <button type="button" class="btn btn-danger" id="btn-action-confirm">Excluir</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Adicionar Substituto Direto -->
+    <div id="substituto-direto-modal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3>Adicionar Cobrador Substituto</h3>
+                <span class="close-btn" id="close-sub-dir-modal">&times;</span>
+            </div>
+            <form id="sub-dir-form">
+                <div class="form-group" style="margin-bottom: 12px;">
+                    <label for="sub-dir-substituto">Cobrador Substituto *</label>
+                    <select id="sub-dir-substituto" class="per-page-select" style="width: 100%;" required>
+                        <option value="">Selecione o substituto...</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 12px;">
+                    <label for="sub-dir-original">Cobrador Original (Substituído) *</label>
+                    <select id="sub-dir-original" class="per-page-select" style="width: 100%;" required>
+                        <option value="">Selecione o original...</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-6">
+                        <label for="sub-dir-inicio">Data Início *</label>
+                        <input type="date" id="sub-dir-inicio" required>
+                    </div>
+                    <div class="form-group col-6">
+                        <label for="sub-dir-fim">Data Fim *</label>
+                        <input type="date" id="sub-dir-fim" required>
+                    </div>
+                </div>
+                <div class="modal-footer" style="margin-top: 20px; padding: 10px 0 0 0;">
+                    <button type="button" class="btn btn-secondary" id="btn-cancel-sub-dir">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Gravar Substituição</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Filas Sem Cobrador -->
+    <div id="filas-sem-cobrador-modal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3>Filas sem Cobradores Ativos</h3>
+                <span class="close-btn" id="close-filas-sem-cob-modal">&times;</span>
+            </div>
+            <div style="max-height: 400px; overflow-y: auto; padding: 12px 0;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid #cbd5e1; text-align: left;">
+                            <th style="padding: 8px;">Nome da Fila</th>
+                            <th style="padding: 8px; text-align: right;">Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="filas-sem-cob-tbody">
+                        <!-- Preenchido via JS -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer" style="padding-top: 10px;">
+                <button type="button" class="btn btn-secondary" id="btn-close-filas-sem-cob">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlay & Card do Tutorial -->
+    <div id="tour-overlay" class="tour-overlay"></div>
+    <div id="tour-card" class="tour-card">
+        <div class="tour-header">
+            <span id="tour-step-badge" class="tour-step-badge">Passo 1 de 5</span>
+            <span class="close-btn" id="btn-tour-close">&times;</span>
+        </div>
+        <div class="tour-body">
+            <h4 id="tour-title">Título do Passo</h4>
+            <p id="tour-description">Descrição explicativa...</p>
+        </div>
+        <div class="tour-footer">
+            <button id="btn-tour-skip" class="btn btn-secondary btn-sm">Pular Tutorial</button>
+            <div class="tour-nav-buttons">
+                <button id="btn-tour-prev" class="btn btn-secondary btn-sm"><i class="fa-solid fa-chevron-left"></i> Anterior</button>
+                <button id="btn-tour-next" class="btn btn-primary btn-sm">Próximo <i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script src="js/api.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

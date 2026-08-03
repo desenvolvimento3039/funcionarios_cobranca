@@ -1,0 +1,24 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: funcionarios_cobranca
+    ports:
+      - "8587:8587"
+    env_file:
+      - ./backend/.env
+    volumes:
+      - ./backend:/app/backend
+      - ./frontend:/app/frontend
+      - /home/desenvolvimento/funcionarios_cobranca:/app/funcionarios_cobranca
+      - ./funcionarios_cobranca.xlsx:/app/funcionarios_cobranca.xlsx
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "python3 -c \"import urllib.request; urllib.request.urlopen('http://localhost:8587/')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
