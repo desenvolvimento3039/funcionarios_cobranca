@@ -35,6 +35,9 @@ venv.bak/
 .env.*
 !.env.example
 
+# Databases
+*.db
+
 # IDEs
 .vscode/
 .idea/

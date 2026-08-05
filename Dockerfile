@@ -13,6 +13,10 @@ RUN pip install --no-cache-dir -r backend/requirements.txt
 COPY backend/ ./backend/
 COPY frontend/ ./frontend/
 
-EXPOSE 8586
+ENV PYTHONPATH=/app/backend
 
-CMD ["gunicorn", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "backend.main:app", "--bind", "0.0.0.0:8587", "--timeout", "120"]
+EXPOSE 8587
+
+WORKDIR /app/backend
+
+CMD ["gunicorn", "-w", "2", "-k", "uvicorn.workers.UvicornWorker", "main:app", "--bind", "0.0.0.0:8587", "--timeout", "120", "--max-requests", "1000", "--max-requests-jitter", "100"]

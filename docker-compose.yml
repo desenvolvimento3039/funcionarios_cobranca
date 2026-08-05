@@ -9,7 +9,6 @@ services:
     env_file:
       - ./backend/.env
     volumes:
-      - ./backend:/app/backend
       - ./frontend:/app/frontend
       - /home/desenvolvimento/funcionarios_cobranca:/app/funcionarios_cobranca
       - ./funcionarios_cobranca.xlsx:/app/funcionarios_cobranca.xlsx
@@ -17,7 +16,7 @@ services:
       - "host.docker.internal:host-gateway"
     restart: always
     healthcheck:
-      test: ["CMD-SHELL", "python3 -c \"import urllib.request; urllib.request.urlopen('http://localhost:8587/')\" || exit 1"]
+      test: ["CMD-SHELL", "python3 -c \"import urllib.request; urllib.request.urlopen('http://localhost:8587/api/cobranca/health')\" || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3

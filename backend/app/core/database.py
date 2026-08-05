@@ -1,46 +1,43 @@
-import urllib.parse
-from typing import Dict, Any, Generator
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session
-import psycopg2
+import sys
+import logging
+from app.infrastructure.database.connection import (
+    engine,
+    SessionLocal,
+    get_engine,
+    get_db,
+    get_psycopg2_conn,
+    DATABASE_URL,
+)
+from app.infrastructure.database.schema_init import inicializar_schema_bancos
 from app.core.config import DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME
 
-engines: Dict[str, Any] = {}
-session_makers: Dict[str, sessionmaker] = {}
+logger = logging.getLogger("uvicorn.error")
 
-def get_engine(dbname: str = None):
-    target_db = dbname if dbname else DB_NAME
-    if target_db not in engines:
-        encoded_pass = urllib.parse.quote_plus(DB_PASSWORD)
-        url = f"postgresql://{DB_USER}:{encoded_pass}@{DB_HOST}:{DB_PORT}/{target_db}"
-        engines[target_db] = create_engine(
-            url,
-            pool_size=10,
-            max_overflow=20,
-            pool_pre_ping=True,
-            pool_recycle=1800
-        )
-        session_makers[target_db] = sessionmaker(autocommit=False, autoflush=False, bind=engines[target_db])
-    return engines[target_db]
+USE_LOCAL_TEST_DB = False
+TARGET_DATABASES = [DB_NAME]
 
-def get_db(dbname: str = None) -> Generator[Session, None, None]:
-    """Dependência para injeção de sessão do SQLAlchemy no FastAPI."""
-    engine = get_engine(dbname)
-    target_db = dbname if dbname else DB_NAME
-    SessionLocal = session_makers[target_db]
-    db = SessionLocal()
+def garantir_view_roteamento():
+    """Alias de compatibilidade."""
+    inicializar_schema_bancos()
+
+def execute_read_dual(func, default=None):
+    """Executa func(conn) no banco configurado com tratamento de erros."""
     try:
-        yield db
-    finally:
-        db.close()
+        with engine.connect() as conn:
+            return func(conn)
+    except Exception as e:
+        sys.stderr.write(f"\n[DB READ ERROR]: {str(e)}\n")
+        sys.stderr.flush()
+        logger.error(f"[DB Read Error]: {e}")
+        return default if default is not None else []
 
-def get_psycopg2_conn(dbname: str = None):
-    target_db = dbname if dbname else DB_NAME
-    return psycopg2.connect(
-        host=DB_HOST,
-        port=DB_PORT,
-        database=target_db,
-        user=DB_USER,
-        password=DB_PASSWORD,
-        connect_timeout=10
-    )
+def execute_write_dual(func):
+    """Executa func(conn) em uma transação no banco configurado."""
+    try:
+        with engine.begin() as conn:
+            return func(conn)
+    except Exception as e:
+        sys.stderr.write(f"\n[DB WRITE ERROR]: {str(e)}\n")
+        sys.stderr.flush()
+        logger.error(f"[DB Write Error]: {e}")
+        raise

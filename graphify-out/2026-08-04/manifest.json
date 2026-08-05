@@ -1,0 +1,92 @@
+{
+  "backend/app/__init__.py": {
+    "mtime": 1785810473.2092974,
+    "ast_hash": "a6df516f61f2eb08653b327619395fdc",
+    "semantic_hash": "a6df516f61f2eb08653b327619395fdc"
+  },
+  "backend/app/api/cobranca.py": {
+    "mtime": 1785813563.6899424,
+    "ast_hash": "c7b1c227c10cb10e11b558aefdb04c62",
+    "semantic_hash": ""
+  },
+  "backend/app/core/config.py": {
+    "mtime": 1785812067.7958395,
+    "ast_hash": "86d930ef83087bd71ba3a1350597b6c7",
+    "semantic_hash": ""
+  },
+  "backend/app/core/database.py": {
+    "mtime": 1785814017.1457276,
+    "ast_hash": "6df03060dfaf645df4352eb514b87b24",
+    "semantic_hash": ""
+  },
+  "backend/app/models/schemas.py": {
+    "mtime": 1785812744.1031227,
+    "ast_hash": "f9047d1a55faa03a9a19aa4b31bae1bf",
+    "semantic_hash": ""
+  },
+  "backend/app/services/cobranca_service.py": {
+    "mtime": 1785813595.6074474,
+    "ast_hash": "917655c948cb795c53040a57ad0f0f36",
+    "semantic_hash": ""
+  },
+  "backend/app/services/sync_service.py": {
+    "mtime": 1785810473.213293,
+    "ast_hash": "5c4c173b950c6f466804da90f7d34405",
+    "semantic_hash": "5c4c173b950c6f466804da90f7d34405"
+  },
+  "backend/app/tasks/scheduler.py": {
+    "mtime": 1785810473.213293,
+    "ast_hash": "8cb3540727900d4e728c9d3efbf09595",
+    "semantic_hash": "8cb3540727900d4e728c9d3efbf09595"
+  },
+  "backend/main.py": {
+    "mtime": 1785814032.8936896,
+    "ast_hash": "2dbac0b191c1f2e2c34b8131771f0c7e",
+    "semantic_hash": ""
+  },
+  "frontend/js/api.js": {
+    "mtime": 1785813528.0166023,
+    "ast_hash": "4479acf0bce8bb16c3e0e6e568f9c340",
+    "semantic_hash": ""
+  },
+  "frontend/js/app.js": {
+    "mtime": 1785813541.7336564,
+    "ast_hash": "307b52d8df0548551ccabf58853aeb49",
+    "semantic_hash": ""
+  },
+  "frontend/js/ui.js": {
+    "mtime": 1785813506.4805627,
+    "ast_hash": "03545aae603728378fe3aa3e564a00ff",
+    "semantic_hash": ""
+  },
+  ".agents/rules/graphify.md": {
+    "mtime": 1785810802.2361233,
+    "ast_hash": "a0e4d192b9e2e17256124dbfc8e24e6a",
+    "semantic_hash": "a0e4d192b9e2e17256124dbfc8e24e6a"
+  },
+  ".agents/workflows/graphify.md": {
+    "mtime": 1785810802.2371306,
+    "ast_hash": "a831cf3669f1e6ab85d8a80ebe655f99",
+    "semantic_hash": "a831cf3669f1e6ab85d8a80ebe655f99"
+  },
+  "backend/requirements.txt": {
+    "mtime": 1785810473.2142944,
+    "ast_hash": "b47b54316d576dcffbf90f3ed8d9a50a",
+    "semantic_hash": "b47b54316d576dcffbf90f3ed8d9a50a"
+  },
+  "docker-compose.yml": {
+    "mtime": 1785810473.2142944,
+    "ast_hash": "2e3ce89ab74ba50c96e2ce72a4bef641",
+    "semantic_hash": "2e3ce89ab74ba50c96e2ce72a4bef641"
+  },
+  "frontend/index.html": {
+    "mtime": 1785813495.6399689,
+    "ast_hash": "10914609fec342e95f0def48e63759d4",
+    "semantic_hash": ""
+  },
+  "backend/seed_test_data.py": {
+    "mtime": 1785814048.3921852,
+    "ast_hash": "f06158eddba10a7a76edee6bb505e7e9",
+    "semantic_hash": ""
+  }
+}

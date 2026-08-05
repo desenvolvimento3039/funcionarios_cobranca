@@ -1,20 +1,25 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Sistema de Gestão de Funcionários de Cobrança Sicoob - Controle de times, PAs, cobradores e filas.">
+    <meta name="description"
+        content="Sistema de Gestão de Funcionários de Cobrança Sicoob - Controle de times, PAs, cobradores e filas.">
     <title>Sicoob | Gestão de Funcionários de Cobrança</title>
     <!-- Google Fonts - Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
     <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Chart.js for Dashboard Analytics -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=20260805_08">
 </head>
+
 <body>
     <div class="app-container">
         <!-- Header -->
@@ -27,22 +32,25 @@
                 </div>
             </div>
             <div class="header-actions">
-                <button id="btn-tutorial" class="btn btn-secondary btn-help" title="Tutorial de Como Usar">
+                <button id="btn-tutorial" class="btn btn-secondary btn-help"
+                    onclick="document.getElementById('tutorial-modal').style.display='block';"
+                    title="Tutorial de Como Usar">
                     <i class="fa-solid fa-circle-question"></i> Como Usar
                 </button>
-                <button id="btn-sync" class="btn btn-primary" title="Sincronizar e inserir novas informações nos bancos LeCom e SicoobSMO">
+                <button id="btn-sync" class="btn btn-primary"
+                    title="Sincronizar e inserir novas informações nos bancos LeCom e SicoobSMO">
                     <i class="fa-solid fa-rotate"></i> Sincronizar Bancos
                 </button>
             </div>
         </header>
 
         <main class="main-content">
-            <!-- Cards Resumo -->
+            <!-- Cards Resumo (5 Cards Alinhados) -->
             <section class="stats-grid" id="step-stats">
                 <div class="stat-card">
                     <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
                     <div class="stat-info">
-                        <span class="stat-label">Total de Funcionários</span>
+                        <span class="stat-label">Total Cobradores</span>
                         <span id="stat-total" class="stat-value">0</span>
                     </div>
                 </div>
@@ -67,8 +75,17 @@
                         <span id="stat-filas" class="stat-value">0</span>
                     </div>
                 </div>
-                <div class="stat-card" id="card-filas-sem-cobrador" style="cursor: pointer; border-left: 4px solid #ef4444;">
-                    <div class="stat-icon" style="color: #ef4444; background: #fee2e2;"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                <div class="stat-card" id="card-substituicoes-ativas" style="cursor: pointer; border-left: 4px solid #8b5cf6;">
+                    <div class="stat-icon" style="color: #7c3aed; background: #f3e8ff;"><i class="fa-solid fa-user-clock"></i></div>
+                    <div class="stat-info">
+                        <span class="stat-label">Substituições Ativas</span>
+                        <span id="stat-substituicoes" class="stat-value" style="color: #7c3aed;">0</span>
+                    </div>
+                </div>
+                <div class="stat-card" id="card-filas-sem-cobrador"
+                    style="cursor: pointer; border-left: 4px solid #ef4444;">
+                    <div class="stat-icon" style="color: #ef4444; background: #fee2e2;"><i
+                            class="fa-solid fa-triangle-exclamation"></i></div>
                     <div class="stat-info">
                         <span class="stat-label">Filas sem Cobradores</span>
                         <span id="stat-filas-sem-cobrador" class="stat-value" style="color: #ef4444;">0</span>
@@ -80,7 +97,8 @@
             <section class="analytics-container" id="analytics-section">
                 <div class="analytics-header">
                     <h3><i class="fa-solid fa-chart-pie"></i> Painel Gráfico & Analytics</h3>
-                    <button id="btn-toggle-analytics" class="btn btn-outline" style="padding: 4px 12px; font-size: 12px;">
+                    <button id="btn-toggle-analytics" class="btn btn-outline"
+                        style="padding: 4px 12px; font-size: 12px;">
                         <i class="fa-solid fa-chevron-up"></i> Ocultar Gráficos
                     </button>
                 </div>
@@ -106,12 +124,14 @@
                 </div>
             </section>
 
-            <!-- Seção de Ações -->
-            <section class="table-actions-bar">
-                <div class="search-and-filters">
-                    <div class="search-box" id="step-search">
+            <!-- Seção de Ações e Filtros (Toolbar de 2 Linhas Limpas) -->
+            <section class="table-actions-container">
+                <!-- Linha 1: Busca Expandida + Filtros Dropdowns -->
+                <div class="toolbar-row-top">
+                    <div class="search-box toolbar-search-expanded" id="step-search">
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" id="search-input" placeholder="Buscar por cobrador, matrícula, fila ou time...">
+                        <input type="text" id="search-input"
+                            placeholder="Buscar por cobrador, matrícula, fila ou time...">
                     </div>
                     <div class="filter-row">
                         <select id="filter-time" class="filter-select">
@@ -125,47 +145,104 @@
                             <option value="1">Ativo</option>
                             <option value="0">Inativo</option>
                         </select>
-                        <button id="btn-limpar-filtros" class="btn btn-outline" title="Limpar todos os filtros" style="display:none;">
+                        <select id="filter-substituicao" class="filter-select">
+                            <option value="">Substituição: Todos</option>
+                            <option value="ORIGINAL">Titulares Ausentes</option>
+                            <option value="SUBSTITUTO">Em Cobertura (Substitutos)</option>
+                            <option value="COM_SUBSTITUICAO">Com Substituição</option>
+                            <option value="SEM_SUBSTITUICAO">Sem Substituição</option>
+                        </select>
+                        <button id="btn-limpar-filtros" class="btn btn-outline" title="Limpar todos os filtros"
+                            style="display:none;">
                             <i class="fa-solid fa-filter-circle-xmark"></i> Limpar
                         </button>
                     </div>
                 </div>
-                <div class="right-actions" id="step-actions">
-                    <button id="btn-upload-excel" class="btn btn-secondary" title="Fazer upload de nova planilha Excel">
-                        <i class="fa-solid fa-file-excel"></i> Upload Excel
-                    </button>
-                    <button id="btn-export-csv" class="btn btn-secondary" title="Exportar tabela em CSV">
-                        <i class="fa-solid fa-file-csv"></i> Exportar CSV
-                    </button>
-                    <button id="btn-add-substituto" class="btn btn-secondary" style="border-color: var(--accent-color); color: var(--accent-color);">
-                        <i class="fa-solid fa-user-clock"></i> Adicionar Substituto
-                    </button>
-                    <button id="btn-add-item" class="btn btn-success">
-                        <i class="fa-solid fa-plus"></i> Novo Funcionário
-                    </button>
+
+                <!-- Linha 2: Botões de Ação Agrupados -->
+                <div class="toolbar-row-bottom" id="step-actions">
+                    <div class="action-group">
+                        <button id="btn-escala-substituicoes" class="btn btn-secondary"
+                            style="border-color: #8b5cf6; color: #7c3aed;"
+                            title="Ver Escala de Substituições e Férias em Tabela">
+                            <i class="fa-solid fa-calendar-days"></i> Escala de Substituições
+                        </button>
+                        <button id="btn-troca-massa" class="btn btn-secondary"
+                            style="border-color: #3b82f6; color: #2563eb;"
+                            title="Troca em massa por Time, PA ou Cobrador">
+                            <i class="fa-solid fa-bolt"></i> Troca em Massa
+                        </button>
+                        <button id="btn-historico-auditoria" class="btn btn-secondary"
+                            title="Histórico de Auditoria de Trocas">
+                            <i class="fa-solid fa-clock-rotate-left"></i> Histórico
+                        </button>
+                    </div>
+                    <div class="action-group">
+                        <button id="btn-upload-excel" class="btn btn-secondary"
+                            title="Fazer upload de nova planilha Excel">
+                            <i class="fa-solid fa-file-excel"></i> Upload Excel
+                        </button>
+                        <button id="btn-export-csv" class="btn btn-secondary" title="Exportar tabela em CSV">
+                            <i class="fa-solid fa-file-csv"></i> Exportar CSV
+                        </button>
+                    </div>
+                    <div class="action-group">
+                        <button id="btn-add-substituto" class="btn btn-secondary"
+                            style="border-color: var(--accent-color); color: var(--accent-color);">
+                            <i class="fa-solid fa-user-clock"></i> Adicionar Substituto
+                        </button>
+                        <button id="btn-add-item" class="btn btn-success">
+                            <i class="fa-solid fa-user-plus"></i> Novo Cobrador
+                        </button>
+                    </div>
                 </div>
             </section>
+
+            <!-- Barra Flutuante de Ações em Lote (Bulk Actions) -->
+            <div id="bulk-actions-bar" class="bulk-actions-bar" style="display:none;">
+                <span id="bulk-selected-count"><strong>0</strong> itens selecionados</span>
+                <div class="bulk-buttons">
+                    <button id="btn-bulk-edit" class="btn btn-sm btn-primary">
+                        <i class="fa-solid fa-user-pen"></i> Alterar Selecionados
+                    </button>
+                    <button id="btn-bulk-inativar" class="btn btn-sm btn-danger">
+                        <i class="fa-solid fa-ban"></i> Inativar Selecionados
+                    </button>
+                    <button id="btn-bulk-clear" class="btn btn-sm btn-outline">
+                        <i class="fa-solid fa-xmark"></i> Desmarcar
+                    </button>
+                </div>
+            </div>
 
             <!-- Tabela de Funcionários de Cobrança -->
             <section class="table-container" id="step-table">
                 <table id="cobranca-table">
                     <thead>
                         <tr>
+                            <th style="width: 40px; text-align: center;">
+                                <input type="checkbox" id="select-all-rows" title="Selecionar Todos">
+                            </th>
                             <th class="th-sortable" data-col="id">ID <i class="fa-solid fa-sort sort-icon"></i></th>
-                            <th class="th-sortable" data-col="time_cobranca">Time <i class="fa-solid fa-sort sort-icon"></i></th>
+                            <th class="th-sortable" data-col="time_cobranca">Time <i class="fa-sort sort-icon"></i></th>
                             <th class="th-sortable" data-col="pa">PA <i class="fa-solid fa-sort sort-icon"></i></th>
-                            <th class="th-sortable" data-col="matricula">Matrícula <i class="fa-solid fa-sort sort-icon"></i></th>
-                            <th class="th-sortable" data-col="cobrador">Cobrador <i class="fa-solid fa-sort sort-icon"></i></th>
+                            <th class="th-sortable" data-col="matricula">Matrícula <i
+                                    class="fa-solid fa-sort sort-icon"></i></th>
+                            <th class="th-sortable" data-col="cobrador">Cobrador <i
+                                    class="fa-solid fa-sort sort-icon"></i></th>
                             <th class="th-sortable" data-col="fila">Fila <i class="fa-solid fa-sort sort-icon"></i></th>
+                            <th>Substituto (De-Para)</th>
+                            <th>Início Substituição</th>
+                            <th>Fim Substituição</th>
                             <th>Telefone</th>
-                            <th class="th-sortable" data-col="status">Status <i class="fa-solid fa-sort sort-icon"></i></th>
+                            <th class="th-sortable" data-col="status">Status <i class="fa-solid fa-sort sort-icon"></i>
+                            </th>
                             <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody id="cobranca-tbody">
                         <tr>
-                            <td colspan="9" class="loading-state">
-                                <i class="fa-solid fa-spinner fa-spin"></i> Carregando funcionários de cobrança...
+                            <td colspan="13" class="loading-state">
+                                <i class="fa-solid fa-spinner fa-spin"></i> Carregando cobradores...
                             </td>
                         </tr>
                     </tbody>
@@ -175,7 +252,8 @@
             <!-- Barra de Paginação -->
             <div class="pagination-container">
                 <div class="pagination-info">
-                    Exibindo <span id="page-start">0</span> - <span id="page-end">0</span> de <span id="page-total">0</span> registros
+                    Exibindo <span id="page-start">0</span> - <span id="page-end">0</span> de <span
+                        id="page-total">0</span> registros
                 </div>
                 <div class="pagination-controls">
                     <label for="per-page-select">Itens por página:</label>
@@ -185,9 +263,11 @@
                         <option value="50">50</option>
                         <option value="100">100</option>
                     </select>
-                    <button id="btn-prev-page" class="btn btn-secondary btn-icon" disabled><i class="fa-solid fa-chevron-left"></i></button>
+                    <button id="btn-prev-page" class="btn btn-secondary btn-icon" disabled><i
+                            class="fa-solid fa-chevron-left"></i></button>
                     <span id="page-current-label">Página 1 de 1</span>
-                    <button id="btn-next-page" class="btn btn-secondary btn-icon" disabled><i class="fa-solid fa-chevron-right"></i></button>
+                    <button id="btn-next-page" class="btn btn-secondary btn-icon" disabled><i
+                            class="fa-solid fa-chevron-right"></i></button>
                 </div>
             </div>
         </main>
@@ -197,292 +277,653 @@
     <div id="sync-result-modal" class="modal">
         <div class="modal-content" style="max-width:520px;">
             <div class="modal-header">
-                <h3><i class="fa-solid fa-rotate" style="color:var(--accent-color);margin-right:8px;"></i>Resultado da Sincronização</h3>
-                <span class="close-btn" id="close-sync-result-modal">&times;</span>
+                <h3><i class="fa-solid fa-rotate" style="color:var(--accent-color);margin-right:8px;"></i>Resultado da
+                    Sincronização</h3>
+                <span class="close-modal" id="close-sync-result-modal">&times;</span>
             </div>
-            <div id="sync-result-body" style="padding: 8px 0 16px;"></div>
+            <div class="modal-body" id="sync-result-body"></div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" id="btn-close-sync-result">Fechar</button>
+                <button class="btn btn-primary" id="btn-close-sync-result">Entendido</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal Form (Criar/Editar Funcionário) -->
+    <!-- Modal Cadastro/Edição: NOVO COBRADOR -->
     <div id="item-modal" class="modal">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 760px; width: 90vw;">
             <div class="modal-header">
-                <h3 id="modal-title">Novo Funcionário de Cobrança</h3>
-                <span class="close-btn" id="close-modal">&times;</span>
+                <h3 id="modal-title">Novo Cobrador</h3>
+                <span class="close-modal" id="close-modal">&times;</span>
             </div>
-
-            <!-- Alerta de Duplicidade -->
-            <div class="alert-info" style="margin-bottom: 16px;">
-                <div class="alert-icon"><i class="fa-solid fa-circle-info"></i></div>
-                <div class="alert-content">
-                    <strong>Validação de Duplicidades:</strong>
-                    <p>Ao digitar a matrícula ou o nome do cobrador, o sistema buscará registros semelhantes já existentes em tempo real.</p>
-                </div>
-            </div>
-
             <form id="item-form">
                 <input type="hidden" id="item-id">
-
-                <div class="form-row">
-                    <div class="form-group col-6">
-                        <label for="item-time">Time de Cobrança *</label>
-                        <div class="item-search-wrapper">
-                            <i class="fa-solid fa-people-group item-search-icon"></i>
-                            <input type="text" id="item-time" required maxlength="100"
-                                   placeholder="Nome do time de cobrança..." autocomplete="off">
+                <div class="modal-body" style="padding: 20px 24px;">
+                    <div class="form-row">
+                        <div class="form-group" style="position: relative;">
+                            <label for="item-time">Time de Cobrança *</label>
+                            <input type="text" id="item-time" required placeholder="Ex: Time Alpha">
                         </div>
-                        <div id="time-suggestions" class="suggestions-container" style="display: none;"></div>
-                    </div>
-                    <div class="form-group col-6">
-                        <label for="item-pa">PA (Ponto de Atendimento) *</label>
-                        <select id="item-pa" class="per-page-select" required>
-                            <option value="">Carregando PAs...</option>
-                        </select>
-                    </div>
-                </div>
-
-                <!-- Campo Busca de Cobrador (fun_funcionario) -->
-                <div class="form-group item-search-group">
-                    <label for="item-cobrador-busca">Buscar Cobrador (tabela fun_funcionario)</label>
-                    <div class="item-search-wrapper">
-                        <i class="fa-solid fa-magnifying-glass item-search-icon"></i>
-                        <input type="text" id="item-cobrador-busca"
-                               placeholder="Digite para buscar cobrador por nome ou matrícula na fun_funcionario..." autocomplete="off">
-                    </div>
-                    <div id="funcionario-suggestions" class="suggestions-container" style="display: none;"></div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group col-4">
-                        <label for="item-matricula">Matrícula *</label>
-                        <input type="number" id="item-matricula" required min="1"
-                               placeholder="Matrícula...">
-                    </div>
-                    <div class="form-group col-4">
-                        <label for="item-cobrador">Nome do Cobrador *</label>
-                        <input type="text" id="item-cobrador" required maxlength="100"
-                               placeholder="Nome do cobrador...">
-                    </div>
-                    <div class="form-group col-4">
-                        <label for="item-fone">Telefone</label>
-                        <input type="text" id="item-fone" maxlength="50"
-                               placeholder="(XX) XXXXX-XXXX">
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group col-8">
-                        <label for="item-fila">Fila de Cobrança *</label>
-                        <div class="linha-input-wrapper">
-                            <input type="text" id="item-fila" required maxlength="100"
-                                   placeholder="Descrição da fila de cobrança..." autocomplete="off">
-                            <i class="fa-solid fa-chevron-down linha-dropdown-icon" id="fila-dropdown-toggle"></i>
+                        <div class="form-group" style="position: relative;">
+                            <label for="item-matricula">Matrícula *</label>
+                            <input type="number" id="item-matricula" required placeholder="Ex: 12345"
+                                autocomplete="off">
+                            <div id="matricula-suggestions" class="autocomplete-suggestions" style="display:none;">
+                            </div>
                         </div>
-                        <div id="fila-suggestions" class="suggestions-container" style="display: none;"></div>
                     </div>
-                    <div class="form-group col-4">
-                        <label for="item-status">Status *</label>
-                        <select id="item-status" class="per-page-select" required>
-                            <option value="1">Ativo</option>
-                            <option value="0">Inativo</option>
-                        </select>
-                    </div>
-                </div>
 
-                <!-- Substituto Section -->
-                <div class="form-row" style="margin-top: 10px; border-top: 1px solid #e2e8f0; padding-top: 10px;">
-                    <div class="form-group col-12">
-                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: #0f172a; font-weight: 500;">
-                            <input type="checkbox" id="item-is-substituto" style="width: 18px; height: 18px;"> 
-                            É um cobrador substituto?
+                    <div class="form-row">
+                        <div class="form-group" style="position: relative;">
+                            <label for="item-cobrador">Nome do Cobrador *</label>
+                            <input type="text" id="item-cobrador" required
+                                placeholder="Ex: Digite o nome para buscar no fun_funcionario..." autocomplete="off">
+                            <div id="cobrador-suggestions" class="autocomplete-suggestions" style="display:none;"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="item-fila">Fila de Cobrança *</label>
+                            <input type="text" id="item-fila" required placeholder="Ex: Fila 01 a 30 Dias">
+                        </div>
+                    </div>
+
+                    <!-- Seletor Múltiplo de PAs (Com Busca Rápida de PA) -->
+                    <div class="form-group" id="pa-field-group">
+                        <label
+                            style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
+                            <span style="font-weight:700; color:var(--primary-color);">PAs (Pontos de Atendimento)
+                                *</span>
+                            <span style="font-size:12px; color:#64748b; font-weight:500;">Marque os PAs a
+                                vincular</span>
+                        </label>
+
+                        <!-- Select único para modo de edição -->
+                        <div id="single-pa-wrapper" style="display:none;">
+                            <select id="item-pa" class="form-control">
+                                <option value="">Selecione o PA...</option>
+                            </select>
+                        </div>
+
+                        <!-- Grid de checkboxes com campo de busca para Multi-PAs -->
+                        <div id="multi-pa-wrapper" class="multi-pa-wrapper">
+                            <div class="multi-pa-search-box" style="margin-bottom: 10px; position:relative;">
+                                <i class="fa-solid fa-magnifying-glass"
+                                    style="position:absolute; left:12px; top:50%; transform:translateY(-50%); color:#94a3b8; font-size:13px;"></i>
+                                <input type="text" id="multi-pa-search-input"
+                                    placeholder="🔍 Filtrar PA por nome ou número (ex: 42 ou Chapecó)..."
+                                    style="width:100%; padding:8px 12px 8px 34px; border-radius:6px; border:1px solid #cbd5e1; font-size:13px;">
+                            </div>
+                            <div class="multi-pa-header">
+                                <label style="cursor:pointer; display:flex; align-items:center; gap:6px;">
+                                    <input type="checkbox" id="item-pa-select-all">
+                                    <span>Selecionar Todos os PAs Filtrados</span>
+                                </label>
+                                <span id="multi-pa-count"
+                                    style="font-size:12px; color:var(--primary-color); font-weight:700;">0
+                                    selecionado(s)</span>
+                            </div>
+                            <div id="item-pas-grid" class="multi-pa-grid"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-row" style="margin-top: 14px;">
+                        <div class="form-group">
+                            <label for="item-fone">Telefone</label>
+                            <input type="text" id="item-fone" placeholder="Ex: (49) 99999-9999">
+                        </div>
+                        <div class="form-group">
+                            <label for="item-status">Status</label>
+                            <select id="item-status">
+                                <option value="1">Ativo</option>
+                                <option value="0">Inativo</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group-checkbox"
+                        style="margin-top: 14px; background: #f8fafc; padding: 12px 16px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                        <label
+                            style="display:flex; align-items:center; gap:10px; cursor:pointer; font-weight:600; font-size: 13px;">
+                            <input type="checkbox" id="item-is-substituto" style="width:16px; height:16px;">
+                            <span><i class="fa-solid fa-user-clock" style="color:var(--accent-color);"></i> Este
+                                cadastro é um Substituto Temporário?</span>
                         </label>
                     </div>
-                </div>
-                
-                <div id="substituto-fields" style="display: none; background: #f8fafc; padding: 12px; border-radius: 6px; border: 1px dashed #cbd5e1; margin-bottom: 12px;">
-                    <div class="form-group item-search-group">
-                        <label for="item-substituto-de">Substituindo quem? * (Tabela de Cobradores Ativos)</label>
-                        <select id="item-substituto-de" class="per-page-select" style="width: 100%;">
-                            <option value="">Selecione o cobrador original...</option>
-                        </select>
-                    </div>
-                    <div class="form-row">
-                        <div class="form-group col-6">
-                            <label for="item-data-inicio">Data Início *</label>
-                            <input type="date" id="item-data-inicio">
+
+                    <div id="substituto-fields"
+                        style="display:none; margin-top: 14px; border-left: 4px solid var(--accent-color); padding-left: 14px; background:#fffdf0; padding-top:10px; padding-bottom:10px; border-radius:0 8px 8px 0;">
+                        <div class="form-group">
+                            <label for="item-substituto-de">Substituindo qual cobrador original?</label>
+                            <select id="item-substituto-de">
+                                <option value="">Selecione o cobrador original...</option>
+                            </select>
                         </div>
-                        <div class="form-group col-6">
-                            <label for="item-data-fim">Data Fim *</label>
-                            <input type="date" id="item-data-fim">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="item-data-inicio">Data Início da Substituição</label>
+                                <input type="date" id="item-data-inicio">
+                            </div>
+                            <div class="form-group">
+                                <label for="item-data-fim">Data Fim da Substituição</label>
+                                <input type="date" id="item-data-fim">
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Aviso de dados não salvos -->
-                <div id="aviso-descarte" class="descarte-warning" style="display:none;">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
-                    <span>Há dados não salvos. Deseja <strong>descartar as alterações</strong>?</span>
-                    <div class="descarte-actions">
-                        <button type="button" id="btn-descartar-confirmar" class="btn btn-danger btn-sm">Descartar</button>
-                        <button type="button" id="btn-descartar-cancelar" class="btn btn-secondary btn-sm">Continuar</button>
-                    </div>
-                </div>
-
-                <!-- Confirmação de Salvamento -->
-                <div id="aviso-confirmar-salvar" class="save-confirm-box" style="display:none;">
-                    <div class="save-confirm-header">
-                        <i class="fa-solid fa-circle-question" style="color: var(--primary-color); font-size: 18px;"></i>
-                        <strong>Confirmar inclusão / alteração do Funcionário?</strong>
-                    </div>
-                    <div class="save-confirm-summary" id="save-confirm-summary-details"></div>
-                    <div class="save-confirm-actions">
-                        <button type="button" id="btn-confirmar-salvar-sim" class="btn btn-success btn-sm"><i class="fa-solid fa-check"></i> Sim, Confirmar</button>
-                        <button type="button" id="btn-confirmar-salvar-nao" class="btn btn-secondary btn-sm"><i class="fa-solid fa-xmark"></i> Voltar / Revisar</button>
-                    </div>
-                </div>
-
-                <div class="modal-footer" id="item-modal-footer">
+                <div class="modal-footer" style="padding: 16px 24px;">
                     <button type="button" class="btn btn-secondary" id="btn-cancel-modal">Cancelar</button>
-                    <button type="submit" class="btn btn-primary" id="btn-save-item">Salvar Funcionário</button>
+                    <button type="submit" class="btn btn-primary" style="padding: 10px 20px;"><i
+                            class="fa-solid fa-check"></i> Salvar Cobrador</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Modal Upload Excel -->
-    <div id="upload-excel-modal" class="modal">
-        <div class="modal-content">
+    <!-- MODAL ⚡ TROCA EM MASSA (Por Time, PA ou Cobrador Definitivo) -->
+    <div id="troca-massa-modal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
             <div class="modal-header">
-                <h3>Upload de Planilha Excel (.xlsx)</h3>
-                <span class="close-btn" id="close-upload-modal">&times;</span>
+                <h3><i class="fa-solid fa-bolt" style="color:#2563eb; margin-right:8px;"></i>Troca em Massa /
+                    Transferência Definitiva</h3>
+                <span class="close-modal" id="close-troca-massa-modal">&times;</span>
             </div>
-            <form id="upload-excel-form">
-                <div class="form-group" style="padding: 16px 0;">
-                    <label for="excel-file-input">Selecione a planilha de Funcionários de Cobrança (.xlsx):</label>
-                    <div style="margin-top: 12px;">
-                        <input type="file" id="excel-file-input" accept=".xlsx, .xls" required
-                               style="padding: 12px; background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 8px; width: 100%; cursor: pointer;">
+            <form id="troca-massa-form">
+                <div class="modal-body">
+                    <div class="tab-buttons" style="display:flex; gap:8px; margin-bottom:16px;">
+                        <button type="button" class="btn btn-sm btn-outline tab-btn active" data-tab="tab-time">Por
+                            Time</button>
+                        <button type="button" class="btn btn-sm btn-outline tab-btn" data-tab="tab-pa">Por PA</button>
+                        <button type="button" class="btn btn-sm btn-outline tab-btn" data-tab="tab-cobrador">Por
+                            Cobrador (Definitiva)</button>
                     </div>
-                    <div class="alert-info" style="margin-top: 16px;">
-                        <div class="alert-icon"><i class="fa-solid fa-circle-info"></i></div>
-                        <div class="alert-content">
-                            <strong>Formato esperado:</strong>
-                            <p>Colunas na ordem: <em>Times de cobrança | PA's | Matricula | Cobradores | Filas | Fones</em></p>
+
+                    <!-- Aba 1: Por Time -->
+                    <div id="tab-time" class="tab-content">
+                        <div class="form-group">
+                            <label for="troca-select-time">Selecione o Time de Cobrança *</label>
+                            <select id="troca-select-time" class="form-control">
+                                <option value="">Selecione o Time...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Aba 2: Por PA -->
+                    <div id="tab-pa" class="tab-content" style="display:none;">
+                        <div class="form-group">
+                            <label for="troca-select-pa">Selecione o PA *</label>
+                            <select id="troca-select-pa" class="form-control">
+                                <option value="">Selecione o PA...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Aba 3: Por Cobrador -->
+                    <div id="tab-cobrador" class="tab-content" style="display:none;">
+                        <div class="form-group">
+                            <label for="troca-select-origem">Cobrador de Origem (Saindo/Transferido) *</label>
+                            <select id="troca-select-origem" class="form-control">
+                                <option value="">Selecione o Cobrador de Origem...</option>
+                            </select>
+                        </div>
+                        <div class="form-group-checkbox" style="margin-bottom: 12px;">
+                            <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                                <input type="checkbox" id="troca-inativar-origem" checked>
+                                <span>Inativar o cobrador de origem após a transferência</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <hr style="margin: 16px 0; border: 0; border-top: 1px solid #e2e8f0;">
+
+                    <!-- Dados do Novo Cobrador -->
+                    <h4>Novo Cobrador (Destino)</h4>
+                    <div class="form-row">
+                        <div class="form-group" style="position: relative;">
+                            <label for="troca-novo-cobrador">Nome do Novo Cobrador *</label>
+                            <input type="text" id="troca-novo-cobrador" required
+                                placeholder="Ex: Digite para buscar no fun_funcionario..." autocomplete="off">
+                            <div id="troca-cobrador-suggestions" class="autocomplete-suggestions" style="display:none;">
+                            </div>
+                        </div>
+                        <div class="form-group" style="position: relative;">
+                            <label for="troca-nova-matricula">Nova Matrícula *</label>
+                            <input type="number" id="troca-nova-matricula" required placeholder="Ex: 55443"
+                                autocomplete="off">
+                            <div id="troca-matricula-suggestions" class="autocomplete-suggestions"
+                                style="display:none;"></div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" id="btn-cancel-upload">Cancelar</button>
-                    <button type="submit" class="btn btn-primary" id="btn-submit-upload">
-                        <i class="fa-solid fa-cloud-arrow-up"></i> Processar Upload & MERGE
-                    </button>
+                    <button type="button" class="btn btn-secondary" id="btn-cancel-troca-massa">Cancelar</button>
+                    <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Executar Troca em
+                        Massa</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Modal de Confirmação de Exclusão -->
-    <div id="confirm-modal" class="modal">
-        <div class="modal-content confirm-modal-content">
-            <div class="modal-header">
-                <h3>Confirmar Exclusão</h3>
-                <span class="close-btn" id="close-confirm-modal">&times;</span>
-            </div>
-            <div class="confirm-body">
-                <i class="fa-solid fa-triangle-exclamation confirm-icon"></i>
-                <p id="confirm-modal-message">Tem certeza de que deseja remover este funcionário das bases LeCom e SicoobSMO?</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" id="btn-cancel-confirm">Cancelar</button>
-                <button type="button" class="btn btn-danger" id="btn-action-confirm">Excluir</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Adicionar Substituto Direto -->
-    <div id="substituto-direto-modal" class="modal">
+    <!-- MODAL ALTERAR SELECIONADOS EM LOTE (Bulk Form Modal) -->
+    <div id="bulk-modal" class="modal">
         <div class="modal-content" style="max-width: 500px;">
             <div class="modal-header">
-                <h3>Adicionar Cobrador Substituto</h3>
-                <span class="close-btn" id="close-sub-dir-modal">&times;</span>
+                <h3><i class="fa-solid fa-user-pen" style="color:var(--primary-color); margin-right:8px;"></i>Alterar
+                    Registros Selecionados</h3>
+                <span class="close-modal" id="close-bulk-modal">&times;</span>
             </div>
-            <form id="sub-dir-form">
-                <div class="form-group" style="margin-bottom: 12px;">
-                    <label for="sub-dir-substituto">Cobrador Substituto *</label>
-                    <select id="sub-dir-substituto" class="per-page-select" style="width: 100%;" required>
-                        <option value="">Selecione o substituto...</option>
-                    </select>
-                </div>
-                <div class="form-group" style="margin-bottom: 12px;">
-                    <label for="sub-dir-original">Cobrador Original (Substituído) *</label>
-                    <select id="sub-dir-original" class="per-page-select" style="width: 100%;" required>
-                        <option value="">Selecione o original...</option>
-                    </select>
-                </div>
-                <div class="form-row">
-                    <div class="form-group col-6">
-                        <label for="sub-dir-inicio">Data Início *</label>
-                        <input type="date" id="sub-dir-inicio" required>
+            <form id="bulk-form">
+                <div class="modal-body">
+                    <p style="font-size:13px; color:#64748b; margin-bottom:12px;">Preencha apenas os campos que deseja
+                        alterar nos registros selecionados.</p>
+                    <div class="form-group">
+                        <label for="bulk-cobrador">Novo Cobrador (Opcional)</label>
+                        <input type="text" id="bulk-cobrador" placeholder="Deixe em branco para não alterar">
                     </div>
-                    <div class="form-group col-6">
-                        <label for="sub-dir-fim">Data Fim *</label>
-                        <input type="date" id="sub-dir-fim" required>
+                    <div class="form-group">
+                        <label for="bulk-matricula">Nova Matrícula (Opcional)</label>
+                        <input type="number" id="bulk-matricula" placeholder="Deixe em branco para não alterar">
+                    </div>
+                    <div class="form-group">
+                        <label for="bulk-time">Novo Time (Opcional)</label>
+                        <input type="text" id="bulk-time" placeholder="Deixe em branco para não alterar">
+                    </div>
+                    <div class="form-group">
+                        <label for="bulk-pa">Novo PA (Opcional)</label>
+                        <select id="bulk-pa">
+                            <option value="">Não alterar PA...</option>
+                        </select>
                     </div>
                 </div>
-                <div class="modal-footer" style="margin-top: 20px; padding: 10px 0 0 0;">
-                    <button type="button" class="btn btn-secondary" id="btn-cancel-sub-dir">Cancelar</button>
-                    <button type="submit" class="btn btn-primary">Gravar Substituição</button>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" id="btn-cancel-bulk">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Aplicar em Lote</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Modal Filas Sem Cobrador -->
-    <div id="filas-sem-cobrador-modal" class="modal">
-        <div class="modal-content" style="max-width: 600px;">
+    <!-- MODAL 📜 HISTÓRICO DE AUDITORIA DE TROCAS -->
+    <div id="auditoria-modal" class="modal">
+        <div class="modal-content" style="max-width: 800px; width:90vw;">
             <div class="modal-header">
-                <h3>Filas sem Cobradores Ativos</h3>
-                <span class="close-btn" id="close-filas-sem-cob-modal">&times;</span>
+                <h3><i class="fa-solid fa-clock-rotate-left"
+                        style="color:var(--primary-color); margin-right:8px;"></i>Histórico de Auditoria de Trocas</h3>
+                <span class="close-modal" id="close-auditoria-modal">&times;</span>
             </div>
-            <div style="max-height: 400px; overflow-y: auto; padding: 12px 0;">
-                <table style="width: 100%; border-collapse: collapse;">
+            <div class="modal-body" style="max-height: 420px; overflow-y: auto;">
+                <table class="data-table" style="width: 100%; border-collapse: collapse;">
                     <thead>
-                        <tr style="border-bottom: 2px solid #cbd5e1; text-align: left;">
-                            <th style="padding: 8px;">Nome da Fila</th>
-                            <th style="padding: 8px; text-align: right;">Ação</th>
+                        <tr
+                            style="background:#f8fafc; border-bottom:2px solid #e2e8f0; text-align:left; font-size:12px;">
+                            <th style="padding:8px;">Data/Hora</th>
+                            <th style="padding:8px;">Tipo de Ação</th>
+                            <th style="padding:8px;">Origem/Time</th>
+                            <th style="padding:8px;">Destino</th>
+                            <th style="padding:8px;">Qtd</th>
+                            <th style="padding:8px;">Detalhe</th>
                         </tr>
                     </thead>
-                    <tbody id="filas-sem-cob-tbody">
-                        <!-- Preenchido via JS -->
+                    <tbody id="auditoria-tbody"></tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btn-close-auditoria">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 📅 ESCALA DE SUBSTITUIÇÕES E FÉRIAS -->
+    <div id="escala-modal" class="modal">
+        <div class="modal-content" style="max-width: 960px; width:94vw;">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-calendar-days" style="color:#7c3aed; margin-right:8px;"></i>Escala de Substituições & Controle de Ausências</h3>
+                <span class="close-modal" id="close-escala-modal">&times;</span>
+            </div>
+            <div class="modal-body" style="max-height: 480px; overflow-y: auto;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
+                    <div class="tab-buttons" style="display:flex; gap:6px;">
+                        <button type="button" class="btn btn-sm btn-outline escala-filter-btn active" data-escala-status="TODAS">Todas</button>
+                        <button type="button" class="btn btn-sm btn-outline escala-filter-btn" data-escala-status="EM_ANDAMENTO">Em Andamento</button>
+                        <button type="button" class="btn btn-sm btn-outline escala-filter-btn" data-escala-status="AGENDADA">Agendadas</button>
+                        <button type="button" class="btn btn-sm btn-outline escala-filter-btn" data-escala-status="CONCLUIDA">Concluídas</button>
+                        <button type="button" class="btn btn-sm btn-outline escala-filter-btn" data-escala-status="CANCELADA">Canceladas</button>
+                    </div>
+                    <button id="btn-escala-nova-substituicao" class="btn btn-sm btn-primary">
+                        <i class="fa-solid fa-plus"></i> Agendar Nova Substituição
+                    </button>
+                </div>
+                <table class="data-table" style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background:#f8fafc; border-bottom:2px solid #e2e8f0; text-align:left; font-size:12px;">
+                            <th style="padding:8px;">Status</th>
+                            <th style="padding:8px;">Cobrador Original (Titular)</th>
+                            <th style="padding:8px;">Substituto (Cobertura)</th>
+                            <th style="padding:8px;">Período (Início ➔ Fim)</th>
+                            <th style="padding:8px; text-align:center;">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="escala-tbody">
+                        <tr><td colspan="5" style="text-align:center; padding:16px; color:#64748b;">Carregando escala...</td></tr>
                     </tbody>
                 </table>
             </div>
-            <div class="modal-footer" style="padding-top: 10px;">
-                <button type="button" class="btn btn-secondary" id="btn-close-filas-sem-cob">Fechar</button>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btn-close-escala">Fechar</button>
             </div>
         </div>
     </div>
 
-    <!-- Overlay & Card do Tutorial -->
-    <div id="tour-overlay" class="tour-overlay"></div>
-    <div id="tour-card" class="tour-card">
-        <div class="tour-header">
-            <span id="tour-step-badge" class="tour-step-badge">Passo 1 de 5</span>
-            <span class="close-btn" id="btn-tour-close">&times;</span>
+    <!-- Modal Substituto Direto (Com Substituição em Massa por Tempo e Busca Inteligente por Autocomplete) -->
+    <div id="substituto-direto-modal" class="modal">
+        <div class="modal-content" style="max-width:680px; width:92vw;">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-user-clock" style="color:var(--accent-color);margin-right:8px;"></i>Agendar
+                    Substituição Temporária (Férias / Ausência)</h3>
+                <span class="close-modal" id="close-sub-dir-modal">&times;</span>
+            </div>
+            <div class="modal-body" style="padding-bottom: 0;">
+                <div class="tab-buttons" style="display:flex; gap:8px; margin-bottom:16px;">
+                    <button type="button" class="btn btn-sm btn-outline tab-btn active"
+                        data-tab="sub-dir-form">Substituição Individual</button>
+                    <button type="button" class="btn btn-sm btn-outline tab-btn" data-tab="sub-massa-form">Substituição
+                        em Massa (Férias)</button>
+                </div>
+
+                <!-- Aba 1: Substituição Individual -->
+                <form id="sub-dir-form" class="tab-content">
+                    <div class="form-group" style="position: relative;">
+                        <label for="sub-dir-orig-search">Cobrador Original (Sendo Substituído) *</label>
+                        <input type="text" id="sub-dir-orig-search"
+                            placeholder="🔍 Digite nome, matrícula, PA ou fila para buscar..." autocomplete="off">
+                        <input type="hidden" id="sub-dir-orig-id" required>
+                        <div id="sub-dir-orig-suggestions" class="autocomplete-suggestions" style="display:none;"></div>
+                        <div id="sub-dir-orig-selected-info" class="selected-cob-info"
+                            style="display:none; margin-top:6px;"></div>
+                    </div>
+
+                    <div class="form-group" style="position: relative; margin-top: 14px;">
+                        <label for="sub-dir-sub-search">Cobrador Substituto (Quem vai assumir) *</label>
+                        <input type="text" id="sub-dir-sub-search"
+                            placeholder="🔍 Digite nome ou matrícula do substituto..." autocomplete="off">
+                        <input type="hidden" id="sub-dir-sub-id" required>
+                        <div id="sub-dir-sub-suggestions" class="autocomplete-suggestions" style="display:none;"></div>
+                        <div id="sub-dir-sub-selected-info" class="selected-cob-info"
+                            style="display:none; margin-top:6px;"></div>
+                    </div>
+
+                    <div class="form-row" style="margin-top: 14px;">
+                        <div class="form-group">
+                            <label for="sub-dir-inicio">Data Início da Substituição *</label>
+                            <input type="date" id="sub-dir-inicio" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="sub-dir-fim">Data Fim da Substituição *</label>
+                            <input type="date" id="sub-dir-fim" required>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer" style="padding-left:0; padding-right:0; margin-top:16px;">
+                        <button type="button" class="btn btn-secondary" id="btn-cancel-sub-dir">Cancelar</button>
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Agendar
+                            Substituição Individual</button>
+                    </div>
+                </form>
+
+                <!-- Aba 2: Substituição em Massa Temporária (Férias) -->
+                <form id="sub-massa-form" class="tab-content" style="display:none;">
+                    <div class="tab-buttons"
+                        style="display:flex; gap:6px; margin-bottom:14px; background:#f8fafc; padding:6px; border-radius:8px; border:1px solid #e2e8f0;">
+                        <button type="button" class="btn btn-xs btn-outline sub-massa-tab-btn active"
+                            data-massa-mode="time">Por Time</button>
+                        <button type="button" class="btn btn-xs btn-outline sub-massa-tab-btn" data-massa-mode="pa">Por
+                            PA</button>
+                        <button type="button" class="btn btn-xs btn-outline sub-massa-tab-btn"
+                            data-massa-mode="cobrador">Por Cobrador Original</button>
+                    </div>
+
+                    <!-- Modo 1: Por Time -->
+                    <div id="sub-massa-mode-time" class="sub-massa-mode-content">
+                        <div class="form-group">
+                            <label for="sub-massa-select-time">Selecione o Time a Substituir *</label>
+                            <select id="sub-massa-select-time" class="form-control">
+                                <option value="">Selecione o Time...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Modo 2: Por PA -->
+                    <div id="sub-massa-mode-pa" class="sub-massa-mode-content" style="display:none;">
+                        <div class="form-group">
+                            <label for="sub-massa-select-pa">Selecione o PA a Substituir *</label>
+                            <select id="sub-massa-select-pa" class="form-control">
+                                <option value="">Selecione o PA...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Modo 3: Por Cobrador Original -->
+                    <div id="sub-massa-mode-cobrador" class="sub-massa-mode-content" style="display:none;">
+                        <div class="form-group">
+                            <label for="sub-massa-select-origem">Cobrador de Origem (Saindo de Férias) *</label>
+                            <select id="sub-massa-select-origem" class="form-control">
+                                <option value="">Selecione o Cobrador Original...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="position: relative; margin-top: 14px;">
+                        <label for="sub-massa-sub-search">Cobrador Substituto (Quem vai assumir todos) *</label>
+                        <input type="text" id="sub-massa-sub-search"
+                            placeholder="🔍 Digite nome ou matrícula do substituto..." autocomplete="off">
+                        <input type="hidden" id="sub-massa-sub-id" required>
+                        <div id="sub-massa-sub-suggestions" class="autocomplete-suggestions" style="display:none;">
+                        </div>
+                        <div id="sub-massa-sub-selected-info" class="selected-cob-info"
+                            style="display:none; margin-top:6px;"></div>
+                    </div>
+
+                    <div class="form-row" style="margin-top: 14px;">
+                        <div class="form-group">
+                            <label for="sub-massa-inicio">Data Início *</label>
+                            <input type="date" id="sub-massa-inicio" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="sub-massa-fim">Data Fim *</label>
+                            <input type="date" id="sub-massa-fim" required>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer" style="padding-left:0; padding-right:0; margin-top:16px;">
+                        <button type="button" class="btn btn-secondary" id="btn-cancel-sub-massa">Cancelar</button>
+                        <button type="submit" class="btn btn-primary"
+                            style="background:#0284c7; border-color:#0284c7;"><i
+                                class="fa-solid fa-users-rectangle"></i> Agendar Substituição em Massa</button>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div class="tour-body">
-            <h4 id="tour-title">Título do Passo</h4>
-            <p id="tour-description">Descrição explicativa...</p>
+    </div>
+
+    <!-- Modal Filas sem Cobrador -->
+    <div id="filas-sem-cobrador-modal" class="modal">
+        <div class="modal-content" style="max-width:620px;">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-triangle-exclamation" style="color:#ef4444;margin-right:8px;"></i>Filas sem
+                    Cobradores Atribuição</h3>
+                <span class="close-modal" id="close-filas-sem-cob-modal">&times;</span>
+            </div>
+            <div class="modal-body" style="max-height: 380px; overflow-y: auto;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid #e2e8f0; text-align: left;">
+                            <th style="padding: 8px;">Fila de Cobrança</th>
+                            <th style="padding: 8px; text-align: right;">Ação</th>
+                        </tr>
+                    </thead>
+                    <tbody id="filas-sem-cob-tbody"></tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btn-close-filas-sem-cob">Fechar</button>
+            </div>
         </div>
-        <div class="tour-footer">
-            <button id="btn-tour-skip" class="btn btn-secondary btn-sm">Pular Tutorial</button>
-            <div class="tour-nav-buttons">
-                <button id="btn-tour-prev" class="btn btn-secondary btn-sm"><i class="fa-solid fa-chevron-left"></i> Anterior</button>
-                <button id="btn-tour-next" class="btn btn-primary btn-sm">Próximo <i class="fa-solid fa-chevron-right"></i></button>
+    </div>
+
+    <!-- MODAL 📊 IMPORTAÇÃO E MODELO EXCEL -->
+    <div id="excel-modal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-file-excel" style="color:#16a34a; margin-right:8px;"></i>Modelo & Importação
+                    Excel</h3>
+                <span class="close-modal" id="close-excel-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div
+                    style="background: #f0fdf4; border-left: 4px solid #16a34a; padding: 14px 16px; border-radius: 6px; margin-bottom: 16px;">
+                    <h4 style="margin: 0 0 6px 0; color: #15803d; font-size: 14px;"><i class="fa-solid fa-download"></i>
+                        Baixe o Modelo Oficial de Importação</h4>
+                    <p style="margin: 0; font-size: 13px; color: #334155;">
+                        Para cadastrar cobradores em lote corretamente, baixe o arquivo modelo e preencha as colunas
+                        conforme o padrão do sistema.
+                    </p>
+                    <button id="btn-download-modelo-excel" class="btn btn-success btn-sm" style="margin-top: 10px;">
+                        <i class="fa-solid fa-file-arrow-down"></i> Baixar Modelo Excel (.csv / .xlsx)
+                    </button>
+                </div>
+
+                <div style="margin-bottom: 16px;">
+                    <h4 style="font-size: 14px; color: var(--primary-color); margin-bottom: 8px;"><i
+                            class="fa-solid fa-file-circle-check"></i> Colunas Obrigatórias no Modelo:</h4>
+                    <ul style="font-size: 13px; color: #475569; padding-left: 20px; margin: 0; line-height: 1.6;">
+                        <li><strong>Times de Cobrança:</strong> Nome do time (ex: Time Alpha)</li>
+                        <li><strong>Num PA:</strong> Código numérico do PA (ex: 42)</li>
+                        <li><strong>Matrícula:</strong> Número da matrícula (ex: 12345)</li>
+                        <li><strong>Cobrador:</strong> Nome completo do funcionário</li>
+                        <li><strong>Fila:</strong> Nome da fila de atendimento</li>
+                        <li><strong>Telefone:</strong> Telefone de contato (opcional)</li>
+                        <li><strong>Status:</strong> Ativo ou Inativo</li>
+                    </ul>
+                </div>
+
+                <hr style="border:0; border-top:1px solid #e2e8f0; margin:16px 0;">
+
+                <div>
+                    <h4 style="font-size: 14px; color: var(--primary-color); margin-bottom: 8px;"><i
+                            class="fa-solid fa-cloud-arrow-up"></i> Selecione o Arquivo Preenchido:</h4>
+                    <input type="file" id="excel-file-input" accept=".xlsx, .xls, .csv"
+                        style="width:100%; padding:8px; border:1px solid #cbd5e1; border-radius:6px; font-size:13px;">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btn-cancel-excel">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="btn-submit-upload-excel"><i
+                        class="fa-solid fa-upload"></i> Realizar Upload</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Confirmação Exclusão -->
+    <div id="confirm-modal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">
+                <h3>Confirmar Exclusão</h3>
+                <span class="close-modal" id="close-confirm-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza que deseja excluir este cobrador? Esta ação não poderá ser desfeita.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btn-cancel-confirm">Cancelar</button>
+                <button class="btn btn-danger" id="btn-action-confirm">Sim, Excluir</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ❓ TUTORIAL / COMO USAR -->
+    <div id="tutorial-modal" class="modal">
+        <div class="modal-content" style="max-width: 720px; width: 90vw;">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-circle-question"
+                        style="color:var(--primary-color); margin-right:8px;"></i>Guia do Sistema — Como Usar</h3>
+                <span class="close-modal" id="close-tutorial-modal"
+                    onclick="document.getElementById('tutorial-modal').style.display='none';">&times;</span>
+            </div>
+            <div class="modal-body"
+                style="max-height: 480px; overflow-y: auto; padding: 20px 24px; font-size: 14px; color: #334155; line-height: 1.6;">
+
+                <div
+                    style="margin-bottom: 20px; background: #f0f9ff; padding: 14px 16px; border-radius: 8px; border-left: 4px solid #0284c7;">
+                    <h4 style="margin: 0 0 6px 0; color: #0369a1;"><i class="fa-solid fa-circle-info"></i> Bem-vindo à
+                        Plataforma de Gestão de Cobrança</h4>
+                    <p style="margin: 0; font-size: 13px; color: #334155;">
+                        Esta plataforma permite gerenciar cobradores, filas de atendimento, pontos de atendimento (PAs),
+                        trocas em massa e substituições temporárias de forma simples e sincronizada.
+                    </p>
+                </div>
+
+                <div class="tutorial-step" style="margin-bottom: 18px;">
+                    <h4 style="color: var(--primary-color); font-size: 15px; margin-bottom: 6px;">
+                        1. 👤 Novo Cobrador e Autocomplete
+                    </h4>
+                    <p style="margin: 0;">
+                        Clique em <strong>"+ Novo Cobrador"</strong> para cadastrar. Ao digitar o Nome ou Matrícula, o
+                        sistema buscará os dados diretamente do cadastro corporativo (<code>fun_funcionario</code>) e
+                        preencherá automaticamente a Matrícula, o Time de Cobrança e o PA vinculado.
+                    </p>
+                </div>
+
+                <div class="tutorial-step" style="margin-bottom: 18px;">
+                    <h4 style="color: var(--primary-color); font-size: 15px; margin-bottom: 6px;">
+                        2. ⚡ Troca em Massa (Transferência Definitiva)
+                    </h4>
+                    <p style="margin: 0;">
+                        Utilize o botão <strong>"⚡ Troca em Massa"</strong> para transferir filas e PAs de cobrança:
+                    </p>
+                    <ul style="margin: 6px 0 0 20px; padding: 0;">
+                        <li><strong>Por Time:</strong> Transfere todos os cobradores de um time para um novo cobrador
+                            destino.</li>
+                        <li><strong>Por PA:</strong> Transfere todos os vínculos de um PA específico para o novo
+                            cobrador.</li>
+                        <li><strong>Por Cobrador:</strong> Selecione o cobrador de origem para transferir todos os seus
+                            vínculos de uma só vez, com opção de inativar o cobrador antigo.</li>
+                    </ul>
+                </div>
+
+                <div class="tutorial-step" style="margin-bottom: 18px;">
+                    <h4 style="color: var(--primary-color); font-size: 15px; margin-bottom: 6px;">
+                        3. 🔄 Substituição Temporária (Férias e Ausências)
+                    </h4>
+                    <p style="margin: 0;">
+                        Para ausências temporárias, clique em <strong>"🔄 Agendar Substituição"</strong>. Informe o
+                        cobrador original, o substituto e as datas de início e fim. O sistema ativará e desativará
+                        automaticamente os acessos nas datas programadas.
+                    </p>
+                </div>
+
+                <div class="tutorial-step" style="margin-bottom: 18px;">
+                    <h4 style="color: var(--primary-color); font-size: 15px; margin-bottom: 6px;">
+                        4. 📊 Painel Analytics e Ocultar Gráficos
+                    </h4>
+                    <p style="margin: 0;">
+                        Acompanhe em tempo real a distribuição de cobradores por Time, Top PAs e Status (Ativos vs.
+                        Inativos). Use o botão <strong>"Ocultar Gráficos"</strong> para recolher o painel se desejar
+                        priorizar a tabela.
+                    </p>
+                </div>
+
+                <div class="tutorial-step" style="margin-bottom: 10px;">
+                    <h4 style="color: var(--primary-color); font-size: 15px; margin-bottom: 6px;">
+                        5. 📜 Histórico de Auditoria
+                    </h4>
+                    <p style="margin: 0;">
+                        Todas as trocas em massa e alterações de status são registradas no botão <strong>"📜 Histórico
+                            Auditoria"</strong> para consultas e prestação de contas.
+                    </p>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="btn-close-tutorial"
+                    onclick="document.getElementById('tutorial-modal').style.display='none';">Entendi, Fechar</button>
             </div>
         </div>
     </div>
@@ -490,8 +931,10 @@
     <!-- Toast Notification -->
     <div id="toast" class="toast"></div>
 
-    <script src="js/api.js"></script>
-    <script src="js/ui.js"></script>
-    <script src="js/app.js"></script>
+    <!-- Scripts -->
+    <script src="js/api.js?v=20260805_08"></script>
+    <script src="js/ui.js?v=20260805_08"></script>
+    <script src="js/app.js?v=20260805_08"></script>
 </body>
+
 </html>

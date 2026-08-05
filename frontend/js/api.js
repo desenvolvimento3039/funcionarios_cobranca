@@ -52,5 +52,29 @@ const api = {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)
         });
-    }
+    },
+    saveSubstituicaoMassa: (payload) => {
+        return apiFetch(`${API_BASE}/cobranca/substituicao-massa`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+    },
+    cancelarSubstituicao: (id) => apiFetch(`${API_BASE}/cobranca/substituicao/${id}`, { method: 'DELETE' }),
+    downloadModeloExcel: () => { window.location.href = `${API_BASE}/cobranca/modelo-excel`; },
+    exportarCSV: () => { window.location.href = `${API_BASE}/cobranca/exportar`; },
+
+    // ─── OPERAÇÕES EM MASSA E AUDITORIA ─────────────────────────────────────────
+    trocaMassa: (payload) => apiFetch(`${API_BASE}/cobranca/troca-massa`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    }),
+    bulkUpdate: (payload) => apiFetch(`${API_BASE}/cobranca/bulk-update`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+    }),
+    getHistoricoAuditoria: () => apiFetch(`${API_BASE}/cobranca/historico-auditoria`),
+    getSubstituicoesEscala: () => apiFetch(`${API_BASE}/cobranca/substituicoes`)
 };

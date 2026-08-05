@@ -6,21 +6,27 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-
-from app.api import cobranca
-
 from contextlib import asynccontextmanager
+
+from app.api import cobranca, financiamento
+from app.infrastructure.database.schema_init import inicializar_schema_bancos
 from app.tasks.scheduler import start_scheduler, shutdown_scheduler
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # Garante a criação automática do schema, tabelas de auditoria, substituição e View SQL em qualquer ambiente
+    try:
+        inicializar_schema_bancos()
+    except Exception as e:
+        print(f"[Lifespan Schema Warning]: {e}")
+        
     start_scheduler()
     yield
     shutdown_scheduler()
 
 app = FastAPI(
-    title="Sicoob | Gestão de Funcionários de Cobrança",
-    description="API de Gestão de Funcionários de Cobrança - Sincronização com bases LeCom e SicoobSMO",
+    title="Sicoob | Gestão de Funcionários de Cobrança & Financiamento Rural",
+    description="API de Gestão de Funcionários de Cobrança e Financiamento Rural",
     version="2.0.0",
     lifespan=lifespan
 )
@@ -53,6 +59,7 @@ app.add_middleware(
 )
 
 app.include_router(cobranca.router)
+app.include_router(financiamento.router)
 
 frontend_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "frontend")
 if os.path.exists(frontend_dir):

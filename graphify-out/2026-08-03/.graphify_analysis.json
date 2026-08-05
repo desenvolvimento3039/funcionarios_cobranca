@@ -1,0 +1,320 @@
+{
+  "communities": {
+    "0": [
+      "frontend_js_app",
+      "frontend_js_app_abrirmodalfilassemcobrador",
+      "frontend_js_app_abrirmodalitem",
+      "frontend_js_app_abrirmodalsubstitutodireto",
+      "frontend_js_app_adicionarcobradorfilacallback",
+      "frontend_js_app_alternarstatus",
+      "frontend_js_app_carregaranalytics",
+      "frontend_js_app_carregarcobranca",
+      "frontend_js_app_carregarpas",
+      "frontend_js_app_confirmarexclusao",
+      "frontend_js_app_editaritem",
+      "frontend_js_app_executarexclusaoconfirmada",
+      "frontend_js_app_fecharconfirmmodal",
+      "frontend_js_app_fecharmodalfilassemcobrador",
+      "frontend_js_app_fecharmodalitem",
+      "frontend_js_app_fecharmodalsubstitutodireto",
+      "frontend_js_app_salvaritem",
+      "frontend_js_app_salvarsubstitutodireto",
+      "frontend_js_app_setupeventlisteners",
+      "frontend_js_app_sincronizarbancos",
+      "frontend_js_app_state",
+      "frontend_js_ui",
+      "frontend_js_ui_ui"
+    ],
+    "1": [
+      "backend_app_tasks_scheduler",
+      "backend_app_tasks_scheduler_processar_substituicoes_job",
+      "backend_app_tasks_scheduler_rationale_9",
+      "backend_app_tasks_scheduler_shutdown_scheduler",
+      "backend_app_tasks_scheduler_start_scheduler",
+      "backend_main",
+      "backend_main_allow_iframe_middleware",
+      "backend_main_lifespan",
+      "backend_main_py_get",
+      "backend_main_read_root",
+      "fastapi",
+      "middleware"
+    ],
+    "2": [
+      "backend_app_api_cobranca",
+      "backend_app_api_cobranca_buscar_funcionarios",
+      "backend_app_api_cobranca_estatisticas_analytics",
+      "backend_app_api_cobranca_exportar_csv",
+      "backend_app_api_cobranca_get_filas_sem_cobradores",
+      "backend_app_api_cobranca_health_check",
+      "backend_app_api_cobranca_listar_cobranca",
+      "backend_app_api_cobranca_listar_pas",
+      "backend_app_api_cobranca_py_get",
+      "backend_app_core_database_get_psycopg2_conn"
+    ],
+    "3": [
+      "any",
+      "backend_app_services_cobranca_service_alterar_status",
+      "backend_app_services_cobranca_service_atualizar_datas_substituicao",
+      "backend_app_services_cobranca_service_buscar_funcionarios",
+      "backend_app_services_cobranca_service_listar_pas",
+      "backend_app_services_cobranca_service_rationale_199",
+      "backend_app_services_cobranca_service_rationale_22",
+      "backend_app_services_cobranca_service_rationale_273",
+      "backend_app_services_cobranca_service_rationale_9"
+    ],
+    "4": [
+      "backend_app_api_cobranca_editar_substituicao",
+      "backend_app_models_schemas",
+      "backend_app_models_schemas_cobrancabase",
+      "backend_app_models_schemas_cobrancacreate",
+      "backend_app_models_schemas_cobrancaresponse",
+      "backend_app_models_schemas_historicosubstituicaoresponse",
+      "backend_app_models_schemas_substituicaoedit",
+      "basemodel"
+    ],
+    "5": [
+      "backend_app_core_database_execute_read_dual",
+      "backend_app_core_database_rationale_51",
+      "backend_app_services_cobranca_service_estatisticas_analytics",
+      "backend_app_services_cobranca_service_listar_cobranca",
+      "backend_app_services_cobranca_service_listar_filas_sem_cobradores",
+      "backend_app_services_cobranca_service_rationale_291",
+      "backend_app_services_cobranca_service_rationale_41",
+      "backend_app_services_cobranca_service_rationale_81"
+    ],
+    "6": [
+      "backend_app_api_cobranca_criar_cobranca",
+      "backend_app_api_cobranca_criar_substituicao",
+      "backend_app_api_cobranca_sincronizar_banco",
+      "backend_app_api_cobranca_upload_excel",
+      "backend_app_models_schemas_substituicaodirectcreate",
+      "post",
+      "uploadfile"
+    ],
+    "7": [
+      "backend_app_core_database_execute_write_dual",
+      "backend_app_core_database_rationale_62",
+      "backend_app_services_cobranca_service_atualizar_cobranca",
+      "backend_app_services_cobranca_service_criar_cobranca",
+      "backend_app_services_cobranca_service_rationale_162",
+      "backend_app_services_cobranca_service_rationale_216",
+      "cobrancacreate"
+    ],
+    "8": [
+      "backend_app_services_cobranca_service",
+      "backend_app_services_cobranca_service_criar_substituicao_direta",
+      "backend_app_services_cobranca_service_deletar_cobranca",
+      "backend_app_services_cobranca_service_exportar_csv_service",
+      "backend_app_services_cobranca_service_rationale_241",
+      "backend_app_services_cobranca_service_rationale_249",
+      "backend_app_services_cobranca_service_rationale_309"
+    ],
+    "9": [
+      "backend_apscheduler",
+      "backend_fastapi",
+      "backend_requirements",
+      "backend_sqlalchemy",
+      "docker_compose_app",
+      "frontend_chartjs",
+      "frontend_index"
+    ],
+    "10": [
+      "backend_app_api_cobranca_alterar_status",
+      "backend_app_api_cobranca_atualizar_cobranca",
+      "backend_app_models_schemas_statusupdate",
+      "patch",
+      "put"
+    ],
+    "11": [
+      "backend_app_core_database",
+      "backend_app_core_database_get_db",
+      "backend_app_core_database_get_engine",
+      "backend_app_core_database_rationale_29",
+      "session"
+    ],
+    "12": [
+      "backend_app_services_sync_service",
+      "backend_app_services_sync_service_parse_excel_cobranca_bytes",
+      "backend_app_services_sync_service_rationale_57",
+      "backend_app_services_sync_service_rationale_8",
+      "backend_app_services_sync_service_sync_cobranca_rows_to_dbs"
+    ],
+    "13": [
+      "agents_rules_graphify",
+      "agents_rules_graphify_graphify",
+      "agents_workflows_graphify",
+      "agents_workflows_graphify_workflow_graphify"
+    ],
+    "14": [
+      "frontend_js_api",
+      "frontend_js_api_api",
+      "frontend_js_api_apifetch"
+    ],
+    "15": [
+      "backend_app_api_cobranca_deletar_cobranca",
+      "delete"
+    ],
+    "16": [
+      "backend_app_core_config"
+    ],
+    "17": [
+      "backend_app_init"
+    ]
+  },
+  "cohesion": {
+    "0": 0.22924901185770752,
+    "1": 0.24242424242424243,
+    "2": 0.35555555555555557,
+    "3": 0.2222222222222222,
+    "4": 0.39285714285714285,
+    "5": 0.25,
+    "6": 0.2857142857142857,
+    "7": 0.3333333333333333,
+    "8": 0.2857142857142857,
+    "9": 0.2857142857142857,
+    "10": 0.4,
+    "11": 0.5,
+    "12": 0.4,
+    "13": 0.5,
+    "14": 0.6666666666666666,
+    "15": 1.0,
+    "16": 1.0,
+    "17": 1.0
+  },
+  "gods": [
+    {
+      "id": "frontend_js_app_setupeventlisteners",
+      "label": "setupEventListeners()",
+      "degree": 16
+    },
+    {
+      "id": "backend_app_core_database_get_engine",
+      "label": "get_engine()",
+      "degree": 10
+    },
+    {
+      "id": "backend_app_core_database_execute_write_dual",
+      "label": "execute_write_dual()",
+      "degree": 10
+    },
+    {
+      "id": "backend_app_core_database_execute_read_dual",
+      "label": "execute_read_dual()",
+      "degree": 9
+    },
+    {
+      "id": "frontend_js_ui_ui",
+      "label": "UI",
+      "degree": 9
+    },
+    {
+      "id": "frontend_js_app_carregarcobranca",
+      "label": "carregarCobranca()",
+      "degree": 8
+    },
+    {
+      "id": "frontend_js_app_salvaritem",
+      "label": "salvarItem()",
+      "degree": 6
+    },
+    {
+      "id": "frontend_js_app_salvarsubstitutodireto",
+      "label": "salvarSubstitutoDireto()",
+      "degree": 6
+    },
+    {
+      "id": "backend_app_models_schemas_cobrancacreate",
+      "label": "CobrancaCreate",
+      "degree": 5
+    },
+    {
+      "id": "backend_app_core_database_get_psycopg2_conn",
+      "label": "get_psycopg2_conn()",
+      "degree": 5
+    }
+  ],
+  "surprises": [
+    {
+      "source": "Docker Service: app",
+      "target": "Backend Requirements",
+      "source_files": [
+        "docker-compose.yml",
+        "backend/requirements.txt"
+      ],
+      "confidence": "INFERRED",
+      "relation": "references",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories"
+    },
+    {
+      "source": "Docker Service: app",
+      "target": "Frontend Index HTML",
+      "source_files": [
+        "docker-compose.yml",
+        "frontend/index.html"
+      ],
+      "confidence": "INFERRED",
+      "relation": "references",
+      "why": "inferred connection - not explicitly stated in source; connects across different repos/directories"
+    },
+    {
+      "source": "criar_cobranca()",
+      "target": "CobrancaCreate",
+      "source_files": [
+        "backend/app/api/cobranca.py",
+        "backend/app/models/schemas.py"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "atualizar_cobranca()",
+      "target": "CobrancaCreate",
+      "source_files": [
+        "backend/app/api/cobranca.py",
+        "backend/app/models/schemas.py"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "references",
+      "why": "bridges separate communities"
+    },
+    {
+      "source": "sincronizar_banco()",
+      "target": "get_engine()",
+      "source_files": [
+        "backend/app/api/cobranca.py",
+        "backend/app/core/database.py"
+      ],
+      "confidence": "EXTRACTED",
+      "relation": "calls",
+      "why": "bridges separate communities"
+    }
+  ],
+  "questions": [
+    {
+      "type": "bridge_node",
+      "question": "Why does `get_engine()` connect `Database Session Management` to `Background Scheduler and Lifecycle`, `Data Retrieval Functions`, `Read-Only Analytics Queries`, `Resource Creation Endpoints`, `Dual-Write Database Logic`, `Core Business Services`?",
+      "why": "High betweenness centrality (0.227) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `execute_write_dual()` connect `Dual-Write Database Logic` to `Core Business Services`, `Employee Management Logic`, `Database Session Management`?",
+      "why": "High betweenness centrality (0.071) - this node is a cross-community bridge."
+    },
+    {
+      "type": "bridge_node",
+      "question": "Why does `execute_read_dual()` connect `Read-Only Analytics Queries` to `Core Business Services`, `Employee Management Logic`, `Database Session Management`?",
+      "why": "High betweenness centrality (0.057) - this node is a cross-community bridge."
+    },
+    {
+      "type": "verify_inferred",
+      "question": "Are the 10 inferred relationships involving `setupEventListeners()` (e.g. with `abrirModalFilasSemCobrador()` and `abrirModalSubstitutoDireto()`) actually correct?",
+      "why": "`setupEventListeners()` has 10 INFERRED edges - model-reasoned connections that need verification."
+    },
+    {
+      "type": "isolated_nodes",
+      "question": "What connects `api`, `graphify`, `Workflow: graphify` to the rest of the system?",
+      "why": "8 weakly-connected nodes found - possible documentation gaps or missing edges."
+    }
+  ]
+}

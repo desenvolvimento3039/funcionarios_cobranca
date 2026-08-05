@@ -1,0 +1,2129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>funcionarios_cobranca — Complete Call Flow &amp; Architecture Documentation</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<style>
+:root {
+  --bg: #0f172a; --surface: #1e293b; --border: #334155;
+  --text: #e2e8f0; --muted: #94a3b8; --accent: #38bdf8;
+  --warn: #fbbf24; --err: #f87171; --ok: #34d399;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+.container { max-width: 1200px; margin: 0 auto; padding: 40px 24px; }
+h1 { font-size: 2.4rem; margin-bottom: 8px; background: linear-gradient(135deg, var(--accent), #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+h2 { font-size: 1.7rem; margin: 48px 0 16px; padding-bottom: 8px; border-bottom: 2px solid var(--accent); }
+h3 { font-size: 1.25rem; margin: 32px 0 12px; color: var(--accent); }
+h4 { font-size: 1.05rem; margin: 20px 0 8px; color: var(--warn); }
+p { margin: 8px 0; color: var(--muted); }
+.subtitle { color: var(--muted); font-size: 1.1rem; margin-bottom: 32px; }
+.mermaid { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin: 20px 0; overflow-x: auto; position: relative; }
+.mermaid.is-enhanced { padding: 0; overflow: hidden; min-height: 260px; }
+.mermaid-viewport { padding: 54px 24px 24px; overflow: hidden; cursor: grab; touch-action: none; min-height: 260px; }
+.mermaid-viewport.is-dragging { cursor: grabbing; }
+.mermaid-viewport svg { max-width: none !important; height: auto; transform-origin: 0 0; transition: transform 120ms ease; }
+.mermaid-toolbar { position: absolute; top: 10px; right: 10px; z-index: 3; display: flex; align-items: center; gap: 6px; padding: 6px; background: rgba(15,23,42,0.92); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.28); }
+.mermaid-toolbar button, .mermaid-toolbar .zoom-level { height: 28px; min-width: 32px; border: 1px solid var(--border); border-radius: 6px; background: #1e293b; color: var(--text); font: 600 0.78rem system-ui, sans-serif; display: inline-flex; align-items: center; justify-content: center; }
+.mermaid-toolbar button { cursor: pointer; }
+.mermaid-toolbar button:hover { border-color: var(--accent); color: var(--accent); }
+.mermaid-toolbar .zoom-level { min-width: 52px; color: var(--muted); background: transparent; }
+.call-table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.92rem; }
+.call-table th { background: #1a2744; color: var(--accent); text-align: left; padding: 10px 14px; border: 1px solid var(--border); }
+.call-table td { padding: 8px 14px; border: 1px solid var(--border); vertical-align: top; }
+.call-table tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+.tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: 600; }
+.tag-async { background: #7c3aed33; color: #a78bfa; }
+.tag-class { background: #05966933; color: var(--ok); }
+.tag-func { background: #2563eb33; color: var(--accent); }
+.tag-cmd { background: #d9770633; color: var(--warn); }
+.tag-endpoint { background: #dc262633; color: var(--err); }
+.tag-hook { background: #db277733; color: #f472b6; }
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin: 16px 0; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px; margin: 16px 0; }
+.arrow-chain { font-family: 'Fira Code', monospace; font-size: 0.85rem; color: var(--accent); padding: 10px; background: rgba(56,189,248,0.06); border-radius: 6px; }
+code { font-family: 'Fira Code', 'Cascadia Code', monospace; background: rgba(255,255,255,0.06); padding: 1px 6px; border-radius: 3px; font-size: 0.88em; }
+ul, ol { margin: 8px 0 8px 24px; color: var(--muted); }
+li { margin: 4px 0; }
+a { color: var(--accent); }
+hr { border: none; border-top: 1px solid var(--border); margin: 40px 0; }
+.nav { position: sticky; top: 0; background: var(--bg); z-index: 10; padding: 12px 0; border-bottom: 1px solid var(--border); display: flex; gap: 20px; flex-wrap: wrap; font-size: 0.9rem; }
+.nav a { text-decoration: none; }
+.nav a:hover { text-decoration: underline; }
+@media (max-width: 768px) { .container { padding: 16px; } h1 { font-size: 1.8rem; } }
+
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>funcionarios_cobranca — Complete Call Flow &amp; Architecture Documentation</h1>
+<p class="subtitle">Generated from graphify knowledge graph: 172 nodes, 355 edges, 14 communities. Commit: unknown</p>
+
+<div class="nav">
+    <a href="#overview">Architecture Overview</a>
+    <a href="#outputs-docs">Outputs &amp; Docs</a>
+    <a href="#cli-skills">CLI &amp; Skill Installers</a>
+    <a href="#serve-api">Serving API</a>
+    <a href="#tests-fixtures">Tests &amp; Fixtures</a>
+    <a href="#app-js">app.js</a>
+    <a href="#cobranca-service-py">cobranca_service.py</a>
+    <a href="#rules-graphify-md">rules/graphify.md</a>
+    <a href="#config-py">config.py</a>
+    <a href="#init-py">__init__.py</a>
+</div>
+
+<!-- ====== Architecture Overview ====== -->
+<h2 id="overview">1. Architecture Overview</h2>
+
+<div class="mermaid">
+
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    OUTPUTS_DOCS_ED82387C("Outputs &amp; Docs<br/><small>7 nodes</small>")
+    class OUTPUTS_DOCS_ED82387C module;
+    CLI_SKILLS_9964CBB8("CLI &amp; Skill Installers<br/><small>16 nodes</small>")
+    class CLI_SKILLS_9964CBB8 module;
+    SERVE_API_35EC8E86("Serving API<br/><small>52 nodes</small>")
+    class SERVE_API_35EC8E86 module;
+    TESTS_FIXTURES_B84B1DCC("Tests &amp; Fixtures<br/><small>12 nodes</small>")
+    class TESTS_FIXTURES_B84B1DCC module;
+    APP_JS_CC08AAF7("app.js<br/><small>41 nodes</small>")
+    class APP_JS_CC08AAF7 module;
+    COBRANCA_SERVICE_PY_D9D4E33B("cobranca_service.py<br/><small>38 nodes</small>")
+    class COBRANCA_SERVICE_PY_D9D4E33B module;
+    RULES_GRAPHIFY_MD_3459230E("rules/graphify.md<br/><small>4 nodes</small>")
+    class RULES_GRAPHIFY_MD_3459230E module;
+    CONFIG_PY_D97AFD82("config.py<br/><small>1 nodes</small>")
+    class CONFIG_PY_D97AFD82 module;
+    INIT_PY_B75F4AF1("__init__.py<br/><small>1 nodes</small>")
+    class INIT_PY_B75F4AF1 module;
+    SERVE_API_35EC8E86 -->|references x9| COBRANCA_SERVICE_PY_D9D4E33B
+    COBRANCA_SERVICE_PY_D9D4E33B -->|calls x6| CLI_SKILLS_9964CBB8
+    TESTS_FIXTURES_B84B1DCC -->|contains x3| COBRANCA_SERVICE_PY_D9D4E33B
+    SERVE_API_35EC8E86 -->|imports x2| TESTS_FIXTURES_B84B1DCC
+    SERVE_API_35EC8E86 -->|imports| CLI_SKILLS_9964CBB8
+    TESTS_FIXTURES_B84B1DCC -->|contains| SERVE_API_35EC8E86
+    TESTS_FIXTURES_B84B1DCC -->|contains| CLI_SKILLS_9964CBB8
+    CLI_SKILLS_9964CBB8 -->|calls| TESTS_FIXTURES_B84B1DCC
+    COBRANCA_SERVICE_PY_D9D4E33B -->|contains| TESTS_FIXTURES_B84B1DCC
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<div class="grid">
+  <div class="card">
+    <h4>Architecture Layers</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>Layer</th><th>Nodes</th><th>Communities</th></tr>
+      <tr><td>Outputs &amp; Docs</td><td>7</td><td><code>6</code></td></tr><tr><td>CLI &amp; Skill Installers</td><td>16</td><td><code>2</code></td></tr><tr><td>Serving API</td><td>52</td><td><code>4, 3, 5, 8, 7, 11</code></td></tr><tr><td>Tests &amp; Fixtures</td><td>12</td><td><code>10</code></td></tr><tr><td>app.js</td><td>41</td><td><code>0</code></td></tr><tr><td>cobranca_service.py</td><td>38</td><td><code>1</code></td></tr><tr><td>rules/graphify.md</td><td>4</td><td><code>9</code></td></tr><tr><td>config.py</td><td>1</td><td><code>12</code></td></tr><tr><td>__init__.py</td><td>1</td><td><code>13</code></td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Core Flow</h4>
+    <div class="arrow-chain">Outputs &amp; Docs -&gt; CLI &amp; Skill Installers -&gt; Tests &amp; Fixtures -&gt; cobranca_service.py -&gt; Serving API -&gt; app.js -&gt; rules/graphify.md</div>
+  </div>
+</div>
+<div class="grid">
+  <div class="card">
+    <h4>Graph Report Highlights</h4>
+    <ul>
+      <li>172 nodes · 355 edges · 14 communities (12 shown, 2 thin omitted)</li>
+      <li>Extraction: 93% EXTRACTED · 7% INFERRED · 0% AMBIGUOUS · INFERRED: 25 edges (avg confidence: 0.53)</li>
+      <li>Token cost: 0 input · 0 output</li>
+      <li>1. `setupEventListeners()` - 34 edges</li>
+      <li>2. `UI` - 20 edges</li>
+      <li>3. `carregarCobranca()` - 14 edges</li>
+    </ul>
+  </div>
+</div>
+<hr>
+<!-- ====== 2. Outputs & Docs ====== -->
+<h2 id="outputs-docs">2. Outputs &amp; Docs</h2>
+<p>Outputs &amp; Docs groups implementation around backend, requirementstxt, frontend, docker, mostly in backend/requirements.txt, frontend/index.html, docker-compose.yml. This section covers 7 nodes and 6 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Outputs &amp; Docs (7 nodes, 6 edges)
+    subgraph outputs_docs_backend_requirements_txt_9fbce9e2["backend/requirements.txt"]
+        backend_requirements_f8319ca2("Backend Requirements<br/><small>backend/requirements.txt</small>")
+        backend_apscheduler_de142a1d("APScheduler<br/><small>backend/requirements.txt</small>")
+        backend_fastapi_239429da("FastAPI<br/><small>backend/requirements.txt</small>")
+        backend_sqlalchemy_51d0acf6("SQLAlchemy<br/><small>backend/requirements.txt</small>")
+    end
+    subgraph outputs_docs_frontend_index_html_39f0b9d4["frontend/index.html"]
+        frontend_index_98770c0b("Frontend Index HTML<br/><small>frontend/index.html</small>")
+        frontend_chartjs_90de3911("Chart.js<br/><small>frontend/index.html</small>")
+    end
+    docker_compose_app_d24bd6b3("Docker Service: app<br/><small>docker-compose.yml</small>")
+    backend_requirements_f8319ca2 -->|references| backend_apscheduler_de142a1d
+    backend_requirements_f8319ca2 -->|references| backend_fastapi_239429da
+    backend_requirements_f8319ca2 -->|references| backend_sqlalchemy_51d0acf6
+    frontend_index_98770c0b -->|references| frontend_chartjs_90de3911
+    docker_compose_app_d24bd6b3 -->|references| backend_requirements_f8319ca2
+    docker_compose_app_d24bd6b3 -->|references| frontend_index_98770c0b
+    class backend_requirements_f8319ca2 klass;
+    class backend_apscheduler_de142a1d klass;
+    class backend_fastapi_239429da api;
+    class backend_sqlalchemy_51d0acf6 klass;
+    class frontend_index_98770c0b klass;
+    class frontend_chartjs_90de3911 klass;
+    class docker_compose_app_d24bd6b3 klass;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>Docker Service: app</code><br><small style="color:var(--muted)">docker-compose.yml</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Docker Service: app node in docker-compose.yml.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>Backend Requirements</code><br><small style="color:var(--muted)">backend/requirements.txt</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Backend Requirements node in backend/requirements.txt.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>Frontend Index HTML</code><br><small style="color:var(--muted)">frontend/index.html</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Exports documentation data to a target format.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>FastAPI</code><br><small style="color:var(--muted)">backend/requirements.txt</small></td>
+  <td><span class="tag tag-endpoint">API</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>FastAPI node in backend/requirements.txt.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>SQLAlchemy</code><br><small style="color:var(--muted)">backend/requirements.txt</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>SQLAlchemy node in backend/requirements.txt.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>APScheduler</code><br><small style="color:var(--muted)">backend/requirements.txt</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>APScheduler node in backend/requirements.txt.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>Chart.js</code><br><small style="color:var(--muted)">frontend/index.html</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Chart.js node in frontend/index.html.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>backend/requirements.txt</code></td><td>4 nodes</td></tr>
+<tr><td><code>frontend/index.html</code></td><td>2 nodes</td></tr>
+<tr><td><code>docker-compose.yml</code></td><td>1 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: references x6. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 3. CLI & Skill Installers ====== -->
+<h2 id="cli-skills">3. CLI &amp; Skill Installers</h2>
+<p>CLI &amp; Skill Installers groups implementation around backend, app, schedulerpy, tasks, mostly in app/tasks/scheduler.py, backend/main.py, app/core/database.py. This section covers 16 nodes and 21 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: CLI &amp; Skill Installers (16 nodes, 21 edges)
+    subgraph cli_skills_app_tasks_scheduler_py_af4d9dff["app/tasks/scheduler.py"]
+        backend_app_tasks_scheduler_shutdown_scheduler_22d400c0("shutdown_scheduler()<br/><small>app/tasks/scheduler.py</small>")
+        backend_app_tasks_scheduler_start_scheduler_04363ba7("start_scheduler()<br/><small>app/tasks/scheduler.py</small>")
+        backend_app_tasks_scheduler_processar_substituic_30cd8c40("processar substituicoes job()<br/><small>app/tasks/scheduler.py</small>")
+        backend_app_tasks_scheduler_f87aef32("scheduler.py")
+        backend_app_tasks_scheduler_rationale_10_97b233cd("Job de processamento da tabela fun_cobr...<br/><small>app/tasks/scheduler.py</small>")
+    end
+    subgraph cli_skills_backend_main_py_4cd387b2["backend/main.py"]
+        backend_main_lifespan_7f2efca5("lifespan()<br/><small>backend/main.py</small>")
+        backend_main_abdb2b1a("main.py")
+        backend_main_allow_iframe_middleware_130f15ac("allow_iframe_middleware()<br/><small>backend/main.py</small>")
+        backend_main_read_root_df2b52df("read_root()<br/><small>backend/main.py</small>")
+    end
+    subgraph cli_skills_External_generated_0c226fa1["External / generated"]
+        fastapi_41a1373c("FastAPI")
+        backend_main_py_get_33edb66b("get")
+        middleware_9460a52b("middleware")
+    end
+    subgraph cli_skills_app_core_database_py_7900626d["app/core/database.py"]
+        backend_app_core_database_inicializar_schema_ban_44ceebf9("inicializar_schema_bancos()<br/><small>app/core/database.py</small>")
+        backend_app_core_database_rationale_85_3d3f4ea3("Garante, de forma idempotente e resilie...<br/><small>app/core/database.py</small>")
+    end
+    subgraph cli_skills_app_services_cobranca_service_py_6ba2b57e["app/services/cobranca_service.py"]
+        backend_app_services_cobranca_service_cancelar_s_d935b068("cancelar substituicao service()<br/><small>app/services/cobranca_service.py</small>")
+        backend_app_services_cobranca_service_rationale_4aaf72cf("Cancela uma substituição agendada ou em...<br/><small>app/services/cobranca_service.py</small>")
+    end
+    backend_app_core_database_inicializar_schema_ban_44ceebf9 -->|calls| backend_main_lifespan_7f2efca5
+    backend_app_services_cobranca_service_cancelar_s_d935b068 -->|calls| backend_app_tasks_scheduler_processar_substituic_30cd8c40
+    backend_app_tasks_scheduler_start_scheduler_04363ba7 -->|calls| backend_main_lifespan_7f2efca5
+    backend_app_tasks_scheduler_shutdown_scheduler_22d400c0 -->|calls| backend_main_lifespan_7f2efca5
+    backend_app_core_database_inicializar_schema_ban_44ceebf9 -->|imports| backend_main_abdb2b1a
+    backend_app_tasks_scheduler_start_scheduler_04363ba7 -->|imports| backend_main_abdb2b1a
+    backend_app_tasks_scheduler_shutdown_scheduler_22d400c0 -->|imports| backend_main_abdb2b1a
+    backend_main_abdb2b1a -->|imports| fastapi_41a1373c
+    class backend_app_tasks_scheduler_shutdown_scheduler_22d400c0 function;
+    class backend_app_tasks_scheduler_start_scheduler_04363ba7 function;
+    class backend_app_tasks_scheduler_processar_substituic_30cd8c40 function;
+    class backend_app_tasks_scheduler_f87aef32 module;
+    class backend_app_tasks_scheduler_rationale_10_97b233cd concept;
+    class backend_main_lifespan_7f2efca5 function;
+    class backend_main_abdb2b1a module;
+    class backend_main_allow_iframe_middleware_130f15ac function;
+    class backend_main_read_root_df2b52df function;
+    class fastapi_41a1373c api;
+    class backend_main_py_get_33edb66b function;
+    class middleware_9460a52b function;
+    class backend_app_core_database_inicializar_schema_ban_44ceebf9 function;
+    class backend_app_core_database_rationale_85_3d3f4ea3 concept;
+    class backend_app_services_cobranca_service_cancelar_s_d935b068 function;
+    class backend_app_services_cobranca_service_rationale_4aaf72cf concept;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>inicializar_schema_bancos()</code><br><small style="color:var(--muted)">app/core/database.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>lifespan()</code><br><small style="color:var(--muted)">backend/main.py</small><br><code>main.py</code><br><small style="color:var(--muted)">backend/main.py</small></td>
+  <td>inicializar_schema_bancos() node in app/core/database.py.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>Garante, de forma idempotente e resiliente a workers concorrentes do Gunicorn,…</code><br><small style="color:var(--muted)">app/core/database.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Garante, de forma idempotente e resiliente a workers concorrentes do Gunicorn,….</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>cancelar_substituicao_service()</code><br><small style="color:var(--muted)">app/services/cobranca_service.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>processar substituicoes job()</code><br><small style="color:var(--muted)">app/tasks/scheduler.py</small></td>
+  <td>cancelar_substituicao_service() node in app/services/cobranca_service.py.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>Cancela uma substituição agendada ou em andamento e grava histórico.</code><br><small style="color:var(--muted)">app/services/cobranca_service.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Cancela uma substituição agendada ou em andamento e grava histórico..</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>scheduler.py</code><br><small style="color:var(--muted)">app/tasks/scheduler.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in app/tasks/scheduler.py.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>processar_substituicoes_job()</code><br><small style="color:var(--muted)">app/tasks/scheduler.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>cancelar substituicao service()</code><br><small style="color:var(--muted)">app/services/cobranca_service.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>processar_substituicoes_job() node in app/tasks/scheduler.py.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>start_scheduler()</code><br><small style="color:var(--muted)">app/tasks/scheduler.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>lifespan()</code><br><small style="color:var(--muted)">backend/main.py</small><br><code>main.py</code><br><small style="color:var(--muted)">backend/main.py</small></td>
+  <td>start_scheduler() node in app/tasks/scheduler.py.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>shutdown_scheduler()</code><br><small style="color:var(--muted)">app/tasks/scheduler.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>lifespan()</code><br><small style="color:var(--muted)">backend/main.py</small><br><code>main.py</code><br><small style="color:var(--muted)">backend/main.py</small></td>
+  <td>shutdown_scheduler() node in app/tasks/scheduler.py.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>Job de processamento da tabela fun_cobranca_substituicoes. Atualiza status em…</code><br><small style="color:var(--muted)">app/tasks/scheduler.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Job de processamento da tabela fun_cobranca_substituicoes. Atualiza status em….</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>main.py</code><br><small style="color:var(--muted)">backend/main.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>inicializar_schema_bancos()</code><br><small style="color:var(--muted)">app/core/database.py</small><br><code>shutdown_scheduler()</code><br><small style="color:var(--muted)">app/tasks/scheduler.py</small><br><code>start_scheduler()</code><br><small style="color:var(--muted)">app/tasks/scheduler.py</small></td>
+  <td><code>FastAPI</code></td>
+  <td>Module file in backend/main.py.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>lifespan()</code><br><small style="color:var(--muted)">backend/main.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>inicializar_schema_bancos()</code><br><small style="color:var(--muted)">app/core/database.py</small><br><code>shutdown_scheduler()</code><br><small style="color:var(--muted)">app/tasks/scheduler.py</small><br><code>start_scheduler()</code><br><small style="color:var(--muted)">app/tasks/scheduler.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>lifespan() node in backend/main.py.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>FastAPI</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-endpoint">API</span></td>
+  <td><code>main.py</code><br><small style="color:var(--muted)">backend/main.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>FastAPI node in project.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>middleware</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>middleware node in project.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>allow_iframe_middleware()</code><br><small style="color:var(--muted)">backend/main.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>allow_iframe_middleware() node in backend/main.py.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>get</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>get node in project.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>read_root()</code><br><small style="color:var(--muted)">backend/main.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>read_root() node in backend/main.py.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>app/tasks/scheduler.py</code></td><td>5 nodes</td></tr>
+<tr><td><code>backend/main.py</code></td><td>4 nodes</td></tr>
+<tr><td><code>app/core/database.py</code></td><td>2 nodes</td></tr>
+<tr><td><code>app/services/cobranca_service.py</code></td><td>2 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x6, calls x4, explains x3, imports x3. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 4. Serving API ====== -->
+<h2 id="serve-api">4. Serving API</h2>
+<p>Serving API groups implementation around backend, app, api, cobrancapy, mostly in app/api/cobranca.py, app/models/schemas.py, app/services/sync_service.py. This section covers 52 nodes and 97 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Serving API (52 nodes, 97 edges)
+    subgraph serve_api_app_models_schemas_py_f5910013["app/models/schemas.py"]
+        backend_app_models_schemas_bulkupdaterequest_99642b4e("BulkUpdateRequest<br/><small>app/models/schemas.py</small>")
+        backend_app_models_schemas_cobrancacreate_db789fd5("CobrancaCreate<br/><small>app/models/schemas.py</small>")
+        backend_app_models_schemas_cobrancaresponse_00485103("CobrancaResponse<br/><small>app/models/schemas.py</small>")
+        backend_app_models_schemas_historicosubstituicao_9894c5d0("HistoricoSubstituicaoResponse<br/><small>app/models/schemas.py</small>")
+        backend_app_models_schemas_statusupdate_960f9225("StatusUpdate<br/><small>app/models/schemas.py</small>")
+        backend_app_models_schemas_substituicaodirectcre_5d76ece8("SubstituicaoDirectCreate<br/><small>app/models/schemas.py</small>")
+        backend_app_models_schemas_substituicaoedit_d5068db5("SubstituicaoEdit<br/><small>app/models/schemas.py</small>")
+        backend_app_models_schemas_substituicaomassarequ_8d0e2e66("SubstituicaoMassaRequest<br/><small>app/models/schemas.py</small>")
+        backend_app_models_schemas_trocamassarequest_72e695ea("TrocaMassaRequest<br/><small>app/models/schemas.py</small>")
+    end
+    subgraph serve_api_External_generated_a71e9f44["External / generated"]
+        basemodel_a0392da1("BaseModel")
+        uploadfile_40d977b5("UploadFile")
+        delete_9485989f("delete")
+    end
+    subgraph serve_api_app_api_cobranca_py_5116599e["app/api/cobranca.py"]
+        backend_app_api_cobranca_47afa13f("cobranca.py")
+        backend_app_api_cobranca_debug_db_8dcd8039("debug_db()<br/><small>app/api/cobranca.py</small>")
+        backend_app_api_cobranca_health_check_543f19b8("health_check()<br/><small>app/api/cobranca.py</small>")
+    end
+    subgraph serve_api_app_services_sync_service_py_4d16e2f6["app/services/sync_service.py"]
+        backend_app_services_sync_service_sync_cobranca_f653484a("sync_cobranca_rows_to_dbs()<br/><small>app/services/sync_service.py</small>")
+        backend_app_services_sync_service_945a7643("sync_service.py")
+    end
+    backend_app_core_database_get_psycopg2_conn_bba2ca4c("get_psycopg2_conn()<br/><small>app/core/database.py</small>")
+    backend_app_api_cobranca_health_check_543f19b8 -->|calls| backend_app_core_database_get_psycopg2_conn_bba2ca4c
+    backend_app_api_cobranca_debug_db_8dcd8039 -->|calls| backend_app_core_database_get_psycopg2_conn_bba2ca4c
+    backend_app_core_database_get_psycopg2_conn_bba2ca4c -->|calls| backend_app_services_sync_service_sync_cobranca_f653484a
+    backend_app_api_cobranca_47afa13f -->|imports| backend_app_core_database_get_psycopg2_conn_bba2ca4c
+    backend_app_api_cobranca_47afa13f -->|imports| backend_app_models_schemas_bulkupdaterequest_99642b4e
+    backend_app_api_cobranca_47afa13f -->|imports| backend_app_models_schemas_cobrancacreate_db789fd5
+    backend_app_api_cobranca_47afa13f -->|imports| backend_app_models_schemas_cobrancaresponse_00485103
+    backend_app_api_cobranca_47afa13f -->|imports| backend_app_models_schemas_historicosubstituicao_9894c5d0
+    backend_app_api_cobranca_47afa13f -->|imports| backend_app_models_schemas_statusupdate_960f9225
+    backend_app_api_cobranca_47afa13f -->|imports| backend_app_models_schemas_substituicaodirectcre_5d76ece8
+    backend_app_api_cobranca_47afa13f -->|imports| backend_app_models_schemas_substituicaoedit_d5068db5
+    backend_app_api_cobranca_47afa13f -->|imports| backend_app_models_schemas_substituicaomassarequ_8d0e2e66
+    backend_app_api_cobranca_47afa13f -->|imports| backend_app_models_schemas_trocamassarequest_72e695ea
+    backend_app_core_database_get_psycopg2_conn_bba2ca4c -->|imports| backend_app_services_sync_service_945a7643
+    %% Omitted for readability: 34 nodes, 0 edges
+    class backend_app_models_schemas_bulkupdaterequest_99642b4e klass;
+    class backend_app_models_schemas_cobrancacreate_db789fd5 klass;
+    class backend_app_models_schemas_cobrancaresponse_00485103 klass;
+    class backend_app_models_schemas_historicosubstituicao_9894c5d0 klass;
+    class backend_app_models_schemas_statusupdate_960f9225 klass;
+    class backend_app_models_schemas_substituicaodirectcre_5d76ece8 klass;
+    class backend_app_models_schemas_substituicaoedit_d5068db5 klass;
+    class backend_app_models_schemas_substituicaomassarequ_8d0e2e66 klass;
+    class backend_app_models_schemas_trocamassarequest_72e695ea klass;
+    class basemodel_a0392da1 klass;
+    class uploadfile_40d977b5 klass;
+    class delete_9485989f function;
+    class backend_app_api_cobranca_47afa13f module;
+    class backend_app_api_cobranca_debug_db_8dcd8039 function;
+    class backend_app_api_cobranca_health_check_543f19b8 function;
+    class backend_app_services_sync_service_sync_cobranca_f653484a function;
+    class backend_app_services_sync_service_945a7643 module;
+    class backend_app_core_database_get_psycopg2_conn_bba2ca4c function;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>criar_substituicao()</code><br><small style="color:var(--muted)">app/api/cobranca.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>criar_substituicao() node in app/api/cobranca.py.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>criar_substituicao_massa()</code><br><small style="color:var(--muted)">app/api/cobranca.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>criar_substituicao_massa() node in app/api/cobranca.py.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>bulk_update()</code><br><small style="color:var(--muted)">app/api/cobranca.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>bulk_update() node in app/api/cobranca.py.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>schemas.py</code><br><small style="color:var(--muted)">app/models/schemas.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in app/models/schemas.py.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>CobrancaBase</code><br><small style="color:var(--muted)">app/models/schemas.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>CobrancaBase node in app/models/schemas.py.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>BaseModel</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>BaseModel node in project.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>CobrancaCreate</code><br><small style="color:var(--muted)">app/models/schemas.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>cobranca.py</code><br><small style="color:var(--muted)">app/api/cobranca.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>CobrancaCreate node in app/models/schemas.py.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>CobrancaResponse</code><br><small style="color:var(--muted)">app/models/schemas.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>cobranca.py</code><br><small style="color:var(--muted)">app/api/cobranca.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>CobrancaResponse node in app/models/schemas.py.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>SubstituicaoDirectCreate</code><br><small style="color:var(--muted)">app/models/schemas.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>cobranca.py</code><br><small style="color:var(--muted)">app/api/cobranca.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>SubstituicaoDirectCreate node in app/models/schemas.py.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>HistoricoSubstituicaoResponse</code><br><small style="color:var(--muted)">app/models/schemas.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>cobranca.py</code><br><small style="color:var(--muted)">app/api/cobranca.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>HistoricoSubstituicaoResponse node in app/models/schemas.py.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>BulkUpdateRequest</code><br><small style="color:var(--muted)">app/models/schemas.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>cobranca.py</code><br><small style="color:var(--muted)">app/api/cobranca.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>BulkUpdateRequest node in app/models/schemas.py.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>SubstituicaoMassaRequest</code><br><small style="color:var(--muted)">app/models/schemas.py</small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td><code>cobranca.py</code><br><small style="color:var(--muted)">app/api/cobranca.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>SubstituicaoMassaRequest node in app/models/schemas.py.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>cobranca.py</code><br><small style="color:var(--muted)">app/api/cobranca.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>BulkUpdateRequest</code><br><small style="color:var(--muted)">app/models/schemas.py</small><br><code>CobrancaCreate</code><br><small style="color:var(--muted)">app/models/schemas.py</small><br><code>CobrancaResponse</code><br><small style="color:var(--muted)">app/models/schemas.py</small><br>+7 more</td>
+  <td>Module file in app/api/cobranca.py.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>get</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>get node in project.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>listar_pas()</code><br><small style="color:var(--muted)">app/api/cobranca.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>listar_pas() node in app/api/cobranca.py.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>buscar_funcionarios()</code><br><small style="color:var(--muted)">app/api/cobranca.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>buscar_funcionarios() node in app/api/cobranca.py.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>estatisticas_analytics()</code><br><small style="color:var(--muted)">app/api/cobranca.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Orchestrates analysis and returns structured documentation data.</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><code>listar_cobranca()</code><br><small style="color:var(--muted)">app/api/cobranca.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>listar_cobranca() node in app/api/cobranca.py.</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>health_check()</code><br><small style="color:var(--muted)">app/api/cobranca.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>get_psycopg2_conn()</code><br><small style="color:var(--muted)">app/core/database.py</small></td>
+  <td>health_check() node in app/api/cobranca.py.</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>get_filas_sem_cobradores()</code><br><small style="color:var(--muted)">app/api/cobranca.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>get_filas_sem_cobradores() node in app/api/cobranca.py.</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><code>historico_auditoria()</code><br><small style="color:var(--muted)">app/api/cobranca.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>historico_auditoria() node in app/api/cobranca.py.</td>
+</tr>
+<tr>
+  <td>22</td>
+  <td><code>baixar_modelo_excel()</code><br><small style="color:var(--muted)">app/api/cobranca.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>baixar_modelo_excel() node in app/api/cobranca.py.</td>
+</tr>
+<tr>
+  <td>23</td>
+  <td><code>exportar_csv()</code><br><small style="color:var(--muted)">app/api/cobranca.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Exports documentation data to a target format.</td>
+</tr>
+<tr>
+  <td>24</td>
+  <td><code>post</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>post node in project.</td>
+</tr>
+<tr>
+  <td>25</td>
+  <td><code>criar_cobranca()</code><br><small style="color:var(--muted)">app/api/cobranca.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>criar_cobranca() node in app/api/cobranca.py.</td>
+</tr>
+<tr>
+  <td>26</td>
+  <td><code>delete</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>delete node in project.</td>
+</tr>
+<tr>
+  <td>27</td>
+  <td><code>deletar_cobranca()</code><br><small style="color:var(--muted)">app/api/cobranca.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>deletar_cobranca() node in app/api/cobranca.py.</td>
+</tr>
+<tr>
+  <td>28</td>
+  <td><code>troca_massa()</code><br><small style="color:var(--muted)">app/api/cobranca.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>troca_massa() node in app/api/cobranca.py.</td>
+</tr>
+<tr>
+  <td>29</td>
+  <td><code>sincronizar_banco()</code><br><small style="color:var(--muted)">app/api/cobranca.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>sincronizar_banco() node in app/api/cobranca.py.</td>
+</tr>
+<tr>
+  <td>30</td>
+  <td><code>upload_excel()</code><br><small style="color:var(--muted)">app/api/cobranca.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>upload_excel() node in app/api/cobranca.py.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>app/api/cobranca.py</code></td><td>24 nodes</td></tr>
+<tr><td><code>app/models/schemas.py</code></td><td>11 nodes</td></tr>
+<tr><td><code>app/services/sync_service.py</code></td><td>5 nodes</td></tr>
+<tr><td><code>frontend/js/api.js</code></td><td>3 nodes</td></tr>
+<tr><td><code>app/core/database.py</code></td><td>2 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x36, references x33, imports x11, inherits x10. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 5. Tests & Fixtures ====== -->
+<h2 id="tests-fixtures">5. Tests &amp; Fixtures</h2>
+<p>Tests &amp; Fixtures groups implementation around backend, app, databasepy, seed, mostly in app/core/database.py, app/services/cobranca_service.py, backend/seed_test_data.py. This section covers 12 nodes and 14 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: Tests &amp; Fixtures (12 nodes, 14 edges)
+    subgraph tests_fixtures_app_core_database_py_7fe6a10e["app/core/database.py"]
+        backend_app_core_database_get_engine_019d30fd("get_engine()<br/><small>app/core/database.py</small>")
+        backend_app_core_database_garantir_view_roteamen_c7259fc9("garantir_view_roteamento()<br/><small>app/core/database.py</small>")
+        backend_app_core_database_441cb8ce("database.py")
+        backend_app_core_database_get_db_a67871cb("get_db()<br/><small>app/core/database.py</small>")
+        backend_app_core_database_rationale_180_3885fcb8("Alias de compatibilidade.<br/><small>app/core/database.py</small>")
+        backend_app_core_database_rationale_35_84abd074("Dependência FastAPI — injeta uma sessão...<br/><small>app/core/database.py</small>")
+        backend_app_core_database_rationale_30_a8107eac("Retorna o engine PostgreSQL configurado.<br/><small>app/core/database.py</small>")
+    end
+    subgraph tests_fixtures_app_services_cobranca_service_py_75506999["app/services/cobranca_service.py"]
+        backend_app_services_cobranca_service_exportar_c_55c55b47("exportar_csv_service()<br/><small>app/services/cobranca_service.py</small>")
+        backend_app_services_cobranca_service_rationale_c3f298ce("Gera dados CSV formatados com UTF-8 BOM...<br/><small>app/services/cobranca_service.py</small>")
+    end
+    subgraph tests_fixtures_backend_seed_test_data_py_1765d923["backend/seed_test_data.py"]
+        backend_seed_test_data_init_db_268d22a0("init_db()<br/><small>backend/seed_test_data.py</small>")
+        backend_seed_test_data_4b2f0b26("seed_test_data.py")
+    end
+    session_fcbdc4c2("Session")
+    backend_app_core_database_get_engine_019d30fd -->|calls| backend_app_services_cobranca_service_exportar_c_55c55b47
+    backend_app_core_database_get_engine_019d30fd -->|calls| backend_seed_test_data_init_db_268d22a0
+    backend_app_core_database_garantir_view_roteamen_c7259fc9 -->|calls| backend_seed_test_data_init_db_268d22a0
+    backend_app_core_database_get_engine_019d30fd -->|imports| backend_seed_test_data_4b2f0b26
+    backend_app_core_database_garantir_view_roteamen_c7259fc9 -->|imports| backend_seed_test_data_4b2f0b26
+    class backend_app_core_database_get_engine_019d30fd function;
+    class backend_app_core_database_garantir_view_roteamen_c7259fc9 function;
+    class backend_app_core_database_441cb8ce module;
+    class backend_app_core_database_get_db_a67871cb function;
+    class backend_app_core_database_rationale_180_3885fcb8 concept;
+    class backend_app_core_database_rationale_35_84abd074 concept;
+    class backend_app_core_database_rationale_30_a8107eac concept;
+    class backend_app_services_cobranca_service_exportar_c_55c55b47 function;
+    class backend_app_services_cobranca_service_rationale_c3f298ce concept;
+    class backend_seed_test_data_init_db_268d22a0 test;
+    class backend_seed_test_data_4b2f0b26 test;
+    class session_fcbdc4c2 klass;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>database.py</code><br><small style="color:var(--muted)">app/core/database.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in app/core/database.py.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>get_engine()</code><br><small style="color:var(--muted)">app/core/database.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>exportar_csv_service()</code><br><small style="color:var(--muted)">app/services/cobranca_service.py</small><br><code>init_db()</code><br><small style="color:var(--muted)">backend/seed_test_data.py</small><br><code>seed_test_data.py</code><br><small style="color:var(--muted)">backend/seed_test_data.py</small></td>
+  <td>get_engine() node in app/core/database.py.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>get_db()</code><br><small style="color:var(--muted)">app/core/database.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>get_db() node in app/core/database.py.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>Session</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Session node in project.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>garantir_view_roteamento()</code><br><small style="color:var(--muted)">app/core/database.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>init_db()</code><br><small style="color:var(--muted)">backend/seed_test_data.py</small><br><code>seed_test_data.py</code><br><small style="color:var(--muted)">backend/seed_test_data.py</small></td>
+  <td>garantir_view_roteamento() node in app/core/database.py.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>Retorna o engine PostgreSQL configurado.</code><br><small style="color:var(--muted)">app/core/database.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Retorna o engine PostgreSQL configurado..</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>Dependência FastAPI — injeta uma sessão SQLAlchemy.</code><br><small style="color:var(--muted)">app/core/database.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Dependência FastAPI — injeta uma sessão SQLAlchemy..</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>Alias de compatibilidade.</code><br><small style="color:var(--muted)">app/core/database.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Alias de compatibilidade..</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>exportar_csv_service()</code><br><small style="color:var(--muted)">app/services/cobranca_service.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>get_engine()</code><br><small style="color:var(--muted)">app/core/database.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>Exports documentation data to a target format.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>Gera dados CSV formatados com UTF-8 BOM e delimitador &#x27;;&#x27; contendo colunas de…</code><br><small style="color:var(--muted)">app/services/cobranca_service.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Gera dados CSV formatados com UTF-8 BOM e delimitador &#x27;;&#x27; contendo colunas de….</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>seed_test_data.py</code><br><small style="color:var(--muted)">backend/seed_test_data.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td><code>garantir_view_roteamento()</code><br><small style="color:var(--muted)">app/core/database.py</small><br><code>get_engine()</code><br><small style="color:var(--muted)">app/core/database.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>Module file in backend/seed_test_data.py.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>init_db()</code><br><small style="color:var(--muted)">backend/seed_test_data.py</small></td>
+  <td><span class="tag tag-func">Test</span></td>
+  <td><code>garantir_view_roteamento()</code><br><small style="color:var(--muted)">app/core/database.py</small><br><code>get_engine()</code><br><small style="color:var(--muted)">app/core/database.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>init_db() node in backend/seed_test_data.py.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>app/core/database.py</code></td><td>7 nodes</td></tr>
+<tr><td><code>app/services/cobranca_service.py</code></td><td>2 nodes</td></tr>
+<tr><td><code>backend/seed_test_data.py</code></td><td>2 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x4, explains x4, calls x3, imports x2. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 6. app.js ====== -->
+<h2 id="app-js">6. app.js</h2>
+<p>app.js groups implementation around frontend, appjs, uijs, state, mostly in frontend/js/app.js, frontend/js/ui.js. This section covers 41 nodes and 124 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: app.js (41 nodes, 124 edges)
+    frontend_js_app_carregarcobranca_78f01a41("carregarCobranca()<br/><small>frontend/js/app.js</small>")
+    frontend_js_app_carregaranalytics_6710d725("carregarAnalytics()<br/><small>frontend/js/app.js</small>")
+    frontend_js_app_setupeventlisteners_59ed293d("setupEventListeners()<br/><small>frontend/js/app.js</small>")
+    frontend_js_app_atualizarcontadormultipa_1ad89998("atualizarContadorMultiPA()<br/><small>frontend/js/app.js</small>")
+    frontend_js_app_fecharmodalsubstitutodireto_c0444609("fecharModalSubstitutoDireto()<br/><small>frontend/js/app.js</small>")
+    frontend_js_app_populafiltrosetrocas_79fa9108("populaFiltrosETrocas()<br/><small>frontend/js/app.js</small>")
+    frontend_js_app_cancelarsubstituicao_2279085f("cancelarSubstituicao()<br/><small>frontend/js/app.js</small>")
+    frontend_js_app_executarbulkupdate_d0891aba("executarBulkUpdate()<br/><small>frontend/js/app.js</small>")
+    frontend_js_app_executartrocamassa_4707f4ba("executarTrocaMassa()<br/><small>frontend/js/app.js</small>")
+    frontend_js_app_executaruploadexcelmodal_6f823ebe("executarUploadExcelModal()<br/><small>frontend/js/app.js</small>")
+    frontend_js_app_salvaritem_dd336d72("salvarItem()<br/><small>frontend/js/app.js</small>")
+    frontend_js_app_salvarsubstituicaomassa_da7db41b("salvarSubstituicaoMassa()<br/><small>frontend/js/app.js</small>")
+    frontend_js_app_salvarsubstitutodireto_a3e946a3("salvarSubstitutoDireto()<br/><small>frontend/js/app.js</small>")
+    frontend_js_app_alternarstatus_11b0e519("alternarStatus()<br/><small>frontend/js/app.js</small>")
+    frontend_js_app_executarexclusaoconfirmada_4877fb0b("executarExclusaoConfirmada()<br/><small>frontend/js/app.js</small>")
+    frontend_js_app_sincronizarbancos_13b3279a("sincronizarBancos()<br/><small>frontend/js/app.js</small>")
+    frontend_js_app_abrirmodaltrocamassa_e6fb0862("abrirModalTrocaMassa()<br/><small>frontend/js/app.js</small>")
+    frontend_js_app_populaselectsubstitutos_90ec1f8c("populaSelectSubstitutos()<br/><small>frontend/js/app.js</small>")
+    frontend_js_app_carregaranalytics_6710d725 -->|calls| frontend_js_app_cancelarsubstituicao_2279085f
+    frontend_js_app_carregaranalytics_6710d725 -->|calls| frontend_js_app_executarbulkupdate_d0891aba
+    frontend_js_app_carregaranalytics_6710d725 -->|calls| frontend_js_app_executartrocamassa_4707f4ba
+    frontend_js_app_carregaranalytics_6710d725 -->|calls| frontend_js_app_executaruploadexcelmodal_6f823ebe
+    frontend_js_app_carregaranalytics_6710d725 -->|calls| frontend_js_app_salvaritem_dd336d72
+    frontend_js_app_carregaranalytics_6710d725 -->|calls| frontend_js_app_salvarsubstituicaomassa_da7db41b
+    frontend_js_app_carregaranalytics_6710d725 -->|calls| frontend_js_app_salvarsubstitutodireto_a3e946a3
+    frontend_js_app_carregaranalytics_6710d725 -->|calls| frontend_js_app_setupeventlisteners_59ed293d
+    frontend_js_app_carregarcobranca_78f01a41 -->|calls| frontend_js_app_alternarstatus_11b0e519
+    frontend_js_app_carregarcobranca_78f01a41 -->|calls| frontend_js_app_cancelarsubstituicao_2279085f
+    frontend_js_app_carregarcobranca_78f01a41 -->|calls| frontend_js_app_populafiltrosetrocas_79fa9108
+    frontend_js_app_carregarcobranca_78f01a41 -->|calls| frontend_js_app_executarbulkupdate_d0891aba
+    frontend_js_app_carregarcobranca_78f01a41 -->|calls| frontend_js_app_executarexclusaoconfirmada_4877fb0b
+    frontend_js_app_carregarcobranca_78f01a41 -->|calls| frontend_js_app_executartrocamassa_4707f4ba
+    frontend_js_app_carregarcobranca_78f01a41 -->|calls| frontend_js_app_executaruploadexcelmodal_6f823ebe
+    frontend_js_app_carregarcobranca_78f01a41 -->|calls| frontend_js_app_salvaritem_dd336d72
+    frontend_js_app_carregarcobranca_78f01a41 -->|calls| frontend_js_app_salvarsubstituicaomassa_da7db41b
+    frontend_js_app_carregarcobranca_78f01a41 -->|calls| frontend_js_app_salvarsubstitutodireto_a3e946a3
+    frontend_js_app_carregarcobranca_78f01a41 -->|calls| frontend_js_app_setupeventlisteners_59ed293d
+    frontend_js_app_carregarcobranca_78f01a41 -->|calls| frontend_js_app_sincronizarbancos_13b3279a
+    frontend_js_app_populafiltrosetrocas_79fa9108 -->|calls| frontend_js_app_abrirmodaltrocamassa_e6fb0862
+    frontend_js_app_populafiltrosetrocas_79fa9108 -->|calls| frontend_js_app_populaselectsubstitutos_90ec1f8c
+    frontend_js_app_atualizarcontadormultipa_1ad89998 -->|calls| frontend_js_app_setupeventlisteners_59ed293d
+    frontend_js_app_setupeventlisteners_59ed293d -->|calls| frontend_js_app_alternarstatus_11b0e519
+    %% Omitted for readability: 23 nodes, 3 edges
+    class frontend_js_app_carregarcobranca_78f01a41 function;
+    class frontend_js_app_carregaranalytics_6710d725 function;
+    class frontend_js_app_setupeventlisteners_59ed293d function;
+    class frontend_js_app_atualizarcontadormultipa_1ad89998 function;
+    class frontend_js_app_fecharmodalsubstitutodireto_c0444609 function;
+    class frontend_js_app_populafiltrosetrocas_79fa9108 function;
+    class frontend_js_app_cancelarsubstituicao_2279085f function;
+    class frontend_js_app_executarbulkupdate_d0891aba function;
+    class frontend_js_app_executartrocamassa_4707f4ba function;
+    class frontend_js_app_executaruploadexcelmodal_6f823ebe function;
+    class frontend_js_app_salvaritem_dd336d72 function;
+    class frontend_js_app_salvarsubstituicaomassa_da7db41b function;
+    class frontend_js_app_salvarsubstitutodireto_a3e946a3 function;
+    class frontend_js_app_alternarstatus_11b0e519 function;
+    class frontend_js_app_executarexclusaoconfirmada_4877fb0b function;
+    class frontend_js_app_sincronizarbancos_13b3279a function;
+    class frontend_js_app_abrirmodaltrocamassa_e6fb0862 function;
+    class frontend_js_app_populaselectsubstitutos_90ec1f8c function;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>app.js</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>app.js node in frontend/js/app.js.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>state</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>state node in frontend/js/app.js.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>carregarPAs()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>carregarPAs() node in frontend/js/app.js.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>carregarAnalytics()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>cancelarSubstituicao()</code><br><small style="color:var(--muted)">frontend/js/app.js</small><br><code>executarBulkUpdate()</code><br><small style="color:var(--muted)">frontend/js/app.js</small><br><code>executarTrocaMassa()</code><br><small style="color:var(--muted)">frontend/js/app.js</small><br>+5 more</td>
+  <td>Orchestrates analysis and returns structured documentation data.</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>carregarCobranca()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>alternarStatus()</code><br><small style="color:var(--muted)">frontend/js/app.js</small><br><code>cancelarSubstituicao()</code><br><small style="color:var(--muted)">frontend/js/app.js</small><br><code>executarBulkUpdate()</code><br><small style="color:var(--muted)">frontend/js/app.js</small><br>+9 more</td>
+  <td>carregarCobranca() node in frontend/js/app.js.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>populaFiltrosETrocas()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>carregarCobranca()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td><code>abrirModalTrocaMassa()</code><br><small style="color:var(--muted)">frontend/js/app.js</small><br><code>populaSelectSubstitutos()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td>populaFiltrosETrocas() node in frontend/js/app.js.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>populaSelectSubstitutos()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>populaFiltrosETrocas()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td><code>abrirModalItem()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td>populaSelectSubstitutos() node in frontend/js/app.js.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>atualizarContadorMultiPA()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>abrirModalItem()</code><br><small style="color:var(--muted)">frontend/js/app.js</small><br><code>adicionarCobradorFilaCallback()</code><br><small style="color:var(--muted)">frontend/js/app.js</small><br><code>setupEventListeners()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td>atualizarContadorMultiPA() node in frontend/js/app.js.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>setupEventListeners()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>atualizarContadorMultiPA()</code><br><small style="color:var(--muted)">frontend/js/app.js</small><br><code>carregarAnalytics()</code><br><small style="color:var(--muted)">frontend/js/app.js</small><br><code>carregarCobranca()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td><code>abrirModalBulkForm()</code><br><small style="color:var(--muted)">frontend/js/app.js</small><br><code>abrirModalItem()</code><br><small style="color:var(--muted)">frontend/js/app.js</small><br><code>alternarStatus()</code><br><small style="color:var(--muted)">frontend/js/app.js</small><br>+5 more</td>
+  <td>setupEventListeners() node in frontend/js/app.js.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>abrirModalItem()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>atualizarContadorMultiPA()</code><br><small style="color:var(--muted)">frontend/js/app.js</small><br><code>populaSelectSubstitutos()</code><br><small style="color:var(--muted)">frontend/js/app.js</small><br><code>setupEventListeners()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td><code>adicionarCobradorFilaCallback()</code><br><small style="color:var(--muted)">frontend/js/app.js</small><br><code>editarItem()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td>abrirModalItem() node in frontend/js/app.js.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>fecharModalItem()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>salvarItem()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td>fecharModalItem() node in frontend/js/app.js.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>salvarItem()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>carregarAnalytics()</code><br><small style="color:var(--muted)">frontend/js/app.js</small><br><code>carregarCobranca()</code><br><small style="color:var(--muted)">frontend/js/app.js</small><br><code>fecharModalItem()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td>No direct outbound edge</td>
+  <td>salvarItem() node in frontend/js/app.js.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>abrirModalTrocaMassa()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>populaFiltrosETrocas()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td>No direct outbound edge</td>
+  <td>abrirModalTrocaMassa() node in frontend/js/app.js.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>fecharModalTrocaMassa()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>executarTrocaMassa()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td>fecharModalTrocaMassa() node in frontend/js/app.js.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>executarTrocaMassa()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>carregarAnalytics()</code><br><small style="color:var(--muted)">frontend/js/app.js</small><br><code>carregarCobranca()</code><br><small style="color:var(--muted)">frontend/js/app.js</small><br><code>fecharModalTrocaMassa()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td>No direct outbound edge</td>
+  <td>executarTrocaMassa() node in frontend/js/app.js.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>abrirModalBulkForm()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>setupEventListeners()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td>No direct outbound edge</td>
+  <td>abrirModalBulkForm() node in frontend/js/app.js.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>fecharModalBulkForm()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>executarBulkUpdate()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td>fecharModalBulkForm() node in frontend/js/app.js.</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><code>executarBulkUpdate()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>carregarAnalytics()</code><br><small style="color:var(--muted)">frontend/js/app.js</small><br><code>carregarCobranca()</code><br><small style="color:var(--muted)">frontend/js/app.js</small><br><code>fecharModalBulkForm()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td>No direct outbound edge</td>
+  <td>executarBulkUpdate() node in frontend/js/app.js.</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>abrirModalAuditoria()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>abrirModalAuditoria() node in frontend/js/app.js.</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>fecharModalAuditoria()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>fecharModalAuditoria() node in frontend/js/app.js.</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><code>setupSubOriginalAutocomplete()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>setupEventListeners()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td>No direct outbound edge</td>
+  <td>setupSubOriginalAutocomplete() node in frontend/js/app.js.</td>
+</tr>
+<tr>
+  <td>22</td>
+  <td><code>setupSubSubstitutoAutocomplete()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>setupEventListeners()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td>No direct outbound edge</td>
+  <td>setupSubSubstitutoAutocomplete() node in frontend/js/app.js.</td>
+</tr>
+<tr>
+  <td>23</td>
+  <td><code>abrirModalSubstitutoDireto()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>abrirModalSubstitutoDireto() node in frontend/js/app.js.</td>
+</tr>
+<tr>
+  <td>24</td>
+  <td><code>fecharModalSubstitutoDireto()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>salvarSubstituicaoMassa()</code><br><small style="color:var(--muted)">frontend/js/app.js</small><br><code>salvarSubstitutoDireto()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td>fecharModalSubstitutoDireto() node in frontend/js/app.js.</td>
+</tr>
+<tr>
+  <td>25</td>
+  <td><code>salvarSubstitutoDireto()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>carregarAnalytics()</code><br><small style="color:var(--muted)">frontend/js/app.js</small><br><code>carregarCobranca()</code><br><small style="color:var(--muted)">frontend/js/app.js</small><br><code>fecharModalSubstitutoDireto()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td>No direct outbound edge</td>
+  <td>salvarSubstitutoDireto() node in frontend/js/app.js.</td>
+</tr>
+<tr>
+  <td>26</td>
+  <td><code>salvarSubstituicaoMassa()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>carregarAnalytics()</code><br><small style="color:var(--muted)">frontend/js/app.js</small><br><code>carregarCobranca()</code><br><small style="color:var(--muted)">frontend/js/app.js</small><br><code>fecharModalSubstitutoDireto()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td>No direct outbound edge</td>
+  <td>salvarSubstituicaoMassa() node in frontend/js/app.js.</td>
+</tr>
+<tr>
+  <td>27</td>
+  <td><code>abrirModalFilasSemCobrador()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td><span class="tag tag-async">Async</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>abrirModalFilasSemCobrador() node in frontend/js/app.js.</td>
+</tr>
+<tr>
+  <td>28</td>
+  <td><code>fecharModalFilasSemCobrador()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td><span class="tag tag-async">Async</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>adicionarCobradorFilaCallback()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td>fecharModalFilasSemCobrador() node in frontend/js/app.js.</td>
+</tr>
+<tr>
+  <td>29</td>
+  <td><code>adicionarCobradorFilaCallback()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>abrirModalItem()</code><br><small style="color:var(--muted)">frontend/js/app.js</small><br><code>atualizarContadorMultiPA()</code><br><small style="color:var(--muted)">frontend/js/app.js</small><br><code>fecharModalFilasSemCobrador()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td>No direct outbound edge</td>
+  <td>adicionarCobradorFilaCallback() node in frontend/js/app.js.</td>
+</tr>
+<tr>
+  <td>30</td>
+  <td><code>abrirModalExcel()</code><br><small style="color:var(--muted)">frontend/js/app.js</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>abrirModalExcel() node in frontend/js/app.js.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>frontend/js/app.js</code></td><td>39 nodes</td></tr>
+<tr><td><code>frontend/js/ui.js</code></td><td>2 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: calls x44, contains x39, references x19. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 7. cobranca_service.py ====== -->
+<h2 id="cobranca-service-py">7. cobranca_service.py</h2>
+<p>cobranca_service.py groups implementation around cobranca, backend, app, servicepy, mostly in app/services/cobranca_service.py, app/core/database.py. This section covers 38 nodes and 65 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: cobranca_service.py (38 nodes, 65 edges)
+    subgraph cobranca_service_py_app_services_cobranca_servic_4df25f83["app/services/cobranca_service.py"]
+        backend_app_services_cobranca_service_buscar_fun_e5f322d1("buscar_funcionarios()<br/><small>app/services/cobranca_service.py</small>")
+        backend_app_services_cobranca_service_estatistic_1774b950("estatisticas_analytics()<br/><small>app/services/cobranca_service.py</small>")
+        backend_app_services_cobranca_service_listar_cob_589582da("listar_cobranca()<br/><small>app/services/cobranca_service.py</small>")
+        backend_app_services_cobranca_service_listar_fil_9599efb4("filas sem cobradores()<br/><small>app/services/cobranca_service.py</small>")
+        backend_app_services_cobranca_service_listar_his_4982f9c7("listar_historico_auditoria()<br/><small>app/services/cobranca_service.py</small>")
+        backend_app_services_cobranca_service_listar_pas_bfdacf54("listar_pas()<br/><small>app/services/cobranca_service.py</small>")
+        backend_app_services_cobranca_service_alterar_st_1aa3088b("alterar_status()<br/><small>app/services/cobranca_service.py</small>")
+        backend_app_services_cobranca_service_atualizar_2bfdc9de("atualizar_cobranca()<br/><small>app/services/cobranca_service.py</small>")
+        backend_app_services_cobranca_service_atualizar_9613c51c("atualizar datas substituicao()<br/><small>app/services/cobranca_service.py</small>")
+        backend_app_services_cobranca_service_bulk_updat_785bb0ad("bulk_update_service()<br/><small>app/services/cobranca_service.py</small>")
+        backend_app_services_cobranca_service_criar_cobr_49f4cab4("criar_cobranca()<br/><small>app/services/cobranca_service.py</small>")
+        backend_app_services_cobranca_service_criar_subs_f48ad289("criar_substituicao_direta()<br/><small>app/services/cobranca_service.py</small>")
+        backend_app_services_cobranca_service_deletar_co_103f5983("deletar_cobranca()<br/><small>app/services/cobranca_service.py</small>")
+        backend_app_services_cobranca_service_substituic_d795ed8c("substituicao_massa_service()<br/><small>app/services/cobranca_service.py</small>")
+        backend_app_services_cobranca_service_troca_mass_0c5fe107("troca_massa_service()<br/><small>app/services/cobranca_service.py</small>")
+        backend_app_services_cobranca_service_ca1efeba("cobranca_service.py")
+    end
+    subgraph cobranca_service_py_app_core_database_py_409bc1da["app/core/database.py"]
+        backend_app_core_database_execute_write_dual_38f99ac0("execute_write_dual()<br/><small>app/core/database.py</small>")
+        backend_app_core_database_execute_read_dual_afc8d4d5("execute_read_dual()<br/><small>app/core/database.py</small>")
+    end
+    backend_app_core_database_execute_read_dual_afc8d4d5 -->|calls| backend_app_services_cobranca_service_buscar_fun_e5f322d1
+    backend_app_core_database_execute_read_dual_afc8d4d5 -->|calls| backend_app_services_cobranca_service_estatistic_1774b950
+    backend_app_core_database_execute_read_dual_afc8d4d5 -->|calls| backend_app_services_cobranca_service_listar_cob_589582da
+    backend_app_core_database_execute_read_dual_afc8d4d5 -->|calls| backend_app_services_cobranca_service_listar_fil_9599efb4
+    backend_app_core_database_execute_read_dual_afc8d4d5 -->|calls| backend_app_services_cobranca_service_listar_his_4982f9c7
+    backend_app_core_database_execute_read_dual_afc8d4d5 -->|calls| backend_app_services_cobranca_service_listar_pas_bfdacf54
+    backend_app_core_database_execute_write_dual_38f99ac0 -->|calls| backend_app_services_cobranca_service_alterar_st_1aa3088b
+    backend_app_core_database_execute_write_dual_38f99ac0 -->|calls| backend_app_services_cobranca_service_atualizar_2bfdc9de
+    backend_app_core_database_execute_write_dual_38f99ac0 -->|calls| backend_app_services_cobranca_service_atualizar_9613c51c
+    backend_app_core_database_execute_write_dual_38f99ac0 -->|calls| backend_app_services_cobranca_service_bulk_updat_785bb0ad
+    backend_app_core_database_execute_write_dual_38f99ac0 -->|calls| backend_app_services_cobranca_service_criar_cobr_49f4cab4
+    backend_app_core_database_execute_write_dual_38f99ac0 -->|calls| backend_app_services_cobranca_service_criar_subs_f48ad289
+    backend_app_core_database_execute_write_dual_38f99ac0 -->|calls| backend_app_services_cobranca_service_deletar_co_103f5983
+    backend_app_core_database_execute_write_dual_38f99ac0 -->|calls| backend_app_services_cobranca_service_substituic_d795ed8c
+    backend_app_core_database_execute_write_dual_38f99ac0 -->|calls| backend_app_services_cobranca_service_troca_mass_0c5fe107
+    backend_app_core_database_execute_read_dual_afc8d4d5 -->|imports| backend_app_services_cobranca_service_ca1efeba
+    backend_app_core_database_execute_write_dual_38f99ac0 -->|imports| backend_app_services_cobranca_service_ca1efeba
+    %% Omitted for readability: 20 nodes, 0 edges
+    class backend_app_services_cobranca_service_buscar_fun_e5f322d1 function;
+    class backend_app_services_cobranca_service_estatistic_1774b950 function;
+    class backend_app_services_cobranca_service_listar_cob_589582da function;
+    class backend_app_services_cobranca_service_listar_fil_9599efb4 function;
+    class backend_app_services_cobranca_service_listar_his_4982f9c7 function;
+    class backend_app_services_cobranca_service_listar_pas_bfdacf54 function;
+    class backend_app_services_cobranca_service_alterar_st_1aa3088b function;
+    class backend_app_services_cobranca_service_atualizar_2bfdc9de function;
+    class backend_app_services_cobranca_service_atualizar_9613c51c function;
+    class backend_app_services_cobranca_service_bulk_updat_785bb0ad function;
+    class backend_app_services_cobranca_service_criar_cobr_49f4cab4 function;
+    class backend_app_services_cobranca_service_criar_subs_f48ad289 function;
+    class backend_app_services_cobranca_service_deletar_co_103f5983 function;
+    class backend_app_services_cobranca_service_substituic_d795ed8c function;
+    class backend_app_services_cobranca_service_troca_mass_0c5fe107 function;
+    class backend_app_services_cobranca_service_ca1efeba module;
+    class backend_app_core_database_execute_write_dual_38f99ac0 function;
+    class backend_app_core_database_execute_read_dual_afc8d4d5 function;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>execute_read_dual()</code><br><small style="color:var(--muted)">app/core/database.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>buscar_funcionarios()</code><br><small style="color:var(--muted)">app/services/cobranca_service.py</small><br><code>cobranca_service.py</code><br><small style="color:var(--muted)">app/services/cobranca_service.py</small><br><code>estatisticas_analytics()</code><br><small style="color:var(--muted)">app/services/cobranca_service.py</small><br>+4 more</td>
+  <td>execute_read_dual() node in app/core/database.py.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>execute_write_dual()</code><br><small style="color:var(--muted)">app/core/database.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td><code>alterar_status()</code><br><small style="color:var(--muted)">app/services/cobranca_service.py</small><br><code>atualizar datas substituicao()</code><br><small style="color:var(--muted)">app/services/cobranca_service.py</small><br><code>atualizar_cobranca()</code><br><small style="color:var(--muted)">app/services/cobranca_service.py</small><br>+7 more</td>
+  <td>execute_write_dual() node in app/core/database.py.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>Executa func(conn) no banco configurado e retorna o resultado.</code><br><small style="color:var(--muted)">app/core/database.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Executa func(conn) no banco configurado e retorna o resultado..</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>Executa func(conn) em uma transação no banco configurado.</code><br><small style="color:var(--muted)">app/core/database.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Executa func(conn) em uma transação no banco configurado..</td>
+</tr>
+<tr>
+  <td>5</td>
+  <td><code>cobranca_service.py</code><br><small style="color:var(--muted)">app/services/cobranca_service.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td><code>execute_read_dual()</code><br><small style="color:var(--muted)">app/core/database.py</small><br><code>execute_write_dual()</code><br><small style="color:var(--muted)">app/core/database.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>Module file in app/services/cobranca_service.py.</td>
+</tr>
+<tr>
+  <td>6</td>
+  <td><code>listar_pas()</code><br><small style="color:var(--muted)">app/services/cobranca_service.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>execute_read_dual()</code><br><small style="color:var(--muted)">app/core/database.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>listar_pas() node in app/services/cobranca_service.py.</td>
+</tr>
+<tr>
+  <td>7</td>
+  <td><code>Any</code><br><small style="color:var(--muted)"></small></td>
+  <td><span class="tag tag-class">Class</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Any node in project.</td>
+</tr>
+<tr>
+  <td>8</td>
+  <td><code>buscar_funcionarios()</code><br><small style="color:var(--muted)">app/services/cobranca_service.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>execute_read_dual()</code><br><small style="color:var(--muted)">app/core/database.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>buscar_funcionarios() node in app/services/cobranca_service.py.</td>
+</tr>
+<tr>
+  <td>9</td>
+  <td><code>estatisticas_analytics()</code><br><small style="color:var(--muted)">app/services/cobranca_service.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>execute_read_dual()</code><br><small style="color:var(--muted)">app/core/database.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>Orchestrates analysis and returns structured documentation data.</td>
+</tr>
+<tr>
+  <td>10</td>
+  <td><code>listar_cobranca()</code><br><small style="color:var(--muted)">app/services/cobranca_service.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>execute_read_dual()</code><br><small style="color:var(--muted)">app/core/database.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>listar_cobranca() node in app/services/cobranca_service.py.</td>
+</tr>
+<tr>
+  <td>11</td>
+  <td><code>criar_cobranca()</code><br><small style="color:var(--muted)">app/services/cobranca_service.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>execute_write_dual()</code><br><small style="color:var(--muted)">app/core/database.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>criar_cobranca() node in app/services/cobranca_service.py.</td>
+</tr>
+<tr>
+  <td>12</td>
+  <td><code>alterar_status()</code><br><small style="color:var(--muted)">app/services/cobranca_service.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>execute_write_dual()</code><br><small style="color:var(--muted)">app/core/database.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>alterar_status() node in app/services/cobranca_service.py.</td>
+</tr>
+<tr>
+  <td>13</td>
+  <td><code>atualizar_cobranca()</code><br><small style="color:var(--muted)">app/services/cobranca_service.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>execute_write_dual()</code><br><small style="color:var(--muted)">app/core/database.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>atualizar_cobranca() node in app/services/cobranca_service.py.</td>
+</tr>
+<tr>
+  <td>14</td>
+  <td><code>deletar_cobranca()</code><br><small style="color:var(--muted)">app/services/cobranca_service.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>execute_write_dual()</code><br><small style="color:var(--muted)">app/core/database.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>deletar_cobranca() node in app/services/cobranca_service.py.</td>
+</tr>
+<tr>
+  <td>15</td>
+  <td><code>gerar_modelo_excel_service()</code><br><small style="color:var(--muted)">app/services/cobranca_service.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>gerar_modelo_excel_service() node in app/services/cobranca_service.py.</td>
+</tr>
+<tr>
+  <td>16</td>
+  <td><code>atualizar_datas_substituicao()</code><br><small style="color:var(--muted)">app/services/cobranca_service.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>execute_write_dual()</code><br><small style="color:var(--muted)">app/core/database.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>atualizar_datas_substituicao() node in app/services/cobranca_service.py.</td>
+</tr>
+<tr>
+  <td>17</td>
+  <td><code>listar_filas_sem_cobradores()</code><br><small style="color:var(--muted)">app/services/cobranca_service.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>execute_read_dual()</code><br><small style="color:var(--muted)">app/core/database.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>listar_filas_sem_cobradores() node in app/services/cobranca_service.py.</td>
+</tr>
+<tr>
+  <td>18</td>
+  <td><code>criar_substituicao_direta()</code><br><small style="color:var(--muted)">app/services/cobranca_service.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>execute_write_dual()</code><br><small style="color:var(--muted)">app/core/database.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>criar_substituicao_direta() node in app/services/cobranca_service.py.</td>
+</tr>
+<tr>
+  <td>19</td>
+  <td><code>substituicao_massa_service()</code><br><small style="color:var(--muted)">app/services/cobranca_service.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>execute_write_dual()</code><br><small style="color:var(--muted)">app/core/database.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>substituicao_massa_service() node in app/services/cobranca_service.py.</td>
+</tr>
+<tr>
+  <td>20</td>
+  <td><code>troca_massa_service()</code><br><small style="color:var(--muted)">app/services/cobranca_service.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>execute_write_dual()</code><br><small style="color:var(--muted)">app/core/database.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>troca_massa_service() node in app/services/cobranca_service.py.</td>
+</tr>
+<tr>
+  <td>21</td>
+  <td><code>bulk_update_service()</code><br><small style="color:var(--muted)">app/services/cobranca_service.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>execute_write_dual()</code><br><small style="color:var(--muted)">app/core/database.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>bulk_update_service() node in app/services/cobranca_service.py.</td>
+</tr>
+<tr>
+  <td>22</td>
+  <td><code>listar_historico_auditoria()</code><br><small style="color:var(--muted)">app/services/cobranca_service.py</small></td>
+  <td><span class="tag tag-func">Function</span></td>
+  <td><code>execute_read_dual()</code><br><small style="color:var(--muted)">app/core/database.py</small></td>
+  <td>No direct outbound edge</td>
+  <td>listar_historico_auditoria() node in app/services/cobranca_service.py.</td>
+</tr>
+<tr>
+  <td>23</td>
+  <td><code>Listagem distinta de PAs ordenada pelo número do PA.</code><br><small style="color:var(--muted)">app/services/cobranca_service.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Listagem distinta de PAs ordenada pelo número do PA..</td>
+</tr>
+<tr>
+  <td>24</td>
+  <td><code>Busca dinâmica de funcionários da tabela fun_funcionario por nome ou matrícula…</code><br><small style="color:var(--muted)">app/services/cobranca_service.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Busca dinâmica de funcionários da tabela fun_funcionario por nome ou matrícula….</td>
+</tr>
+<tr>
+  <td>25</td>
+  <td><code>Compila relatórios analíticos de funcionários por time, PA e status.</code><br><small style="color:var(--muted)">app/services/cobranca_service.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Compila relatórios analíticos de funcionários por time, PA e status..</td>
+</tr>
+<tr>
+  <td>26</td>
+  <td><code>Lista funcionários de cobrança com suporte a paginação, filtros e ordenação.</code><br><small style="color:var(--muted)">app/services/cobranca_service.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Lista funcionários de cobrança com suporte a paginação, filtros e ordenação..</td>
+</tr>
+<tr>
+  <td>27</td>
+  <td><code>Cria um ou múltiplos registros de cobrador no banco de dados (Suporte a Multi-…</code><br><small style="color:var(--muted)">app/services/cobranca_service.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Cria um ou múltiplos registros de cobrador no banco de dados (Suporte a Multi-….</td>
+</tr>
+<tr>
+  <td>28</td>
+  <td><code>Alterna o status de um funcionário (1: Ativo, 0: Inativo).</code><br><small style="color:var(--muted)">app/services/cobranca_service.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Alterna o status de um funcionário (1: Ativo, 0: Inativo)..</td>
+</tr>
+<tr>
+  <td>29</td>
+  <td><code>Atualiza dados cadastrais do funcionário de cobrança.</code><br><small style="color:var(--muted)">app/services/cobranca_service.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Atualiza dados cadastrais do funcionário de cobrança..</td>
+</tr>
+<tr>
+  <td>30</td>
+  <td><code>Exclui um funcionário de cobrança pelo ID.</code><br><small style="color:var(--muted)">app/services/cobranca_service.py</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Design note for Exclui um funcionário de cobrança pelo ID..</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>app/services/cobranca_service.py</code></td><td>33 nodes</td></tr>
+<tr><td><code>app/core/database.py</code></td><td>4 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: explains x18, contains x16, calls x15, references x14. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 8. rules/graphify.md ====== -->
+<h2 id="rules-graphify-md">8. rules/graphify.md</h2>
+<p>rules/graphify.md groups implementation around graphifymd, agents, rules, workflows, mostly in .agents/rules/graphify.md, .agents/workflows/graphify.md. This section covers 4 nodes and 3 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: rules/graphify.md (4 nodes, 3 edges)
+    subgraph rules_graphify_md_agents_rules_graphify_md_3185e59d[".agents/rules/graphify.md"]
+        agents_rules_graphify_8193478b("rules/graphify.md")
+        agents_rules_graphify_graphify_dd1d4f66("graphify<br/><small>.agents/rules/graphify.md</small>")
+    end
+    subgraph rules_graphify_md_agents_workflows_graphify_md_1050d63a[".agents/workflows/graphify.md"]
+        agents_workflows_graphify_08a1cc26("workflows/graphify.md")
+        agents_workflows_graphify_workflow_graphify_87f5fa2b("Workflow: graphify<br/><small>.agents/workflows/graphify.md</small>")
+    end
+    agents_rules_graphify_8193478b -->|relates| agents_workflows_graphify_08a1cc26
+    agents_rules_graphify_8193478b -->|contains| agents_rules_graphify_graphify_dd1d4f66
+    agents_workflows_graphify_08a1cc26 -->|contains| agents_workflows_graphify_workflow_graphify_87f5fa2b
+    class agents_rules_graphify_8193478b concept;
+    class agents_rules_graphify_graphify_dd1d4f66 concept;
+    class agents_workflows_graphify_08a1cc26 concept;
+    class agents_workflows_graphify_workflow_graphify_87f5fa2b concept;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>rules/graphify.md</code><br><small style="color:var(--muted)">.agents/rules/graphify.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing rules/graphify.md.</td>
+</tr>
+<tr>
+  <td>2</td>
+  <td><code>graphify</code><br><small style="color:var(--muted)">.agents/rules/graphify.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing graphify.</td>
+</tr>
+<tr>
+  <td>3</td>
+  <td><code>workflows/graphify.md</code><br><small style="color:var(--muted)">.agents/workflows/graphify.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing workflows/graphify.md.</td>
+</tr>
+<tr>
+  <td>4</td>
+  <td><code>Workflow: graphify</code><br><small style="color:var(--muted)">.agents/workflows/graphify.md</small></td>
+  <td><span class="tag tag-func">Concept</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Documentation node describing Workflow: graphify.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>.agents/rules/graphify.md</code></td><td>2 nodes</td></tr>
+<tr><td><code>.agents/workflows/graphify.md</code></td><td>2 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: contains x2, relates x1. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 9. config.py ====== -->
+<h2 id="config-py">9. config.py</h2>
+<p>config.py groups implementation around configpy, backend, app, mostly in app/core/config.py. This section covers 1 nodes and 0 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: config.py (1 nodes, 0 edges)
+    backend_app_core_config_befdc705("config.py")
+    class backend_app_core_config_befdc705 module;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>config.py</code><br><small style="color:var(--muted)">app/core/config.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in app/core/config.py.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>app/core/config.py</code></td><td>1 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: No high-confidence call edges detected. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<!-- ====== 10. __init__.py ====== -->
+<h2 id="init-py">10. __init__.py</h2>
+<p>__init__.py groups implementation around backend, app, mostly in backend/app/__init__.py. This section covers 1 nodes and 0 internal edges; the diagram shows only representative relationships to stay readable.</p>
+
+<div class="mermaid">
+%%{init: {"theme": "dark", "themeVariables": {"fontSize": "15.0px", "fontFamily": "Segoe UI, system-ui, sans-serif", "primaryColor": "#1e293b", "primaryTextColor": "#e2e8f0", "primaryBorderColor": "#38bdf8", "secondaryColor": "#0f172a", "tertiaryColor": "#334155", "lineColor": "#64748b", "textColor": "#e2e8f0"}, "flowchart": {"htmlLabels": true, "curve": "basis", "nodeSpacing": 48, "rankSpacing": 64, "padding": 14, "diagramPadding": 10, "useMaxWidth": true}}}%%
+flowchart LR
+    %% Section: __init__.py (1 nodes, 0 edges)
+    backend_app_init_f4bd9b21("__init__.py")
+    class backend_app_init_f4bd9b21 module;
+    classDef entry fill:#422006,stroke:#fbbf24,color:#fde68a,stroke-width:1px;
+    classDef api fill:#450a0a,stroke:#f87171,color:#fee2e2,stroke-width:1px;
+    classDef async fill:#2e1065,stroke:#a78bfa,color:#ede9fe,stroke-width:1px;
+    classDef klass fill:#064e3b,stroke:#34d399,color:#d1fae5,stroke-width:1px;
+    classDef ui fill:#831843,stroke:#f472b6,color:#fce7f3,stroke-width:1px;
+    classDef module fill:#172554,stroke:#60a5fa,color:#dbeafe,stroke-width:1px;
+    classDef test fill:#3f3f46,stroke:#a1a1aa,color:#f4f4f5,stroke-width:1px;
+    classDef concept fill:#292524,stroke:#a8a29e,color:#fafaf9,stroke-dasharray:4 3;
+    classDef function fill:#0f172a,stroke:#38bdf8,color:#e0f2fe,stroke-width:1px;
+</div>
+
+<h3>Call Details</h3>
+<table class="call-table">
+<tr>
+  <th style="width:5%">#</th>
+  <th style="width:28%">Node</th>
+  <th style="width:10%">Type</th>
+  <th style="width:17%">Caller</th>
+  <th style="width:20%">Callees</th>
+  <th style="width:20%">Description</th>
+</tr>
+<tr>
+  <td>1</td>
+  <td><code>__init__.py</code><br><small style="color:var(--muted)">backend/app/__init__.py</small></td>
+  <td><span class="tag tag-class">Module</span></td>
+  <td>External entry / no inbound edge</td>
+  <td>No direct outbound edge</td>
+  <td>Module file in backend/app/__init__.py.</td>
+</tr>
+</table>
+
+<div class="grid">
+  <div class="card">
+    <h4>Key Files</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><th>File</th><th>Coverage</th></tr>
+      <tr><td><code>backend/app/__init__.py</code></td><td>1 nodes</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Design Notes</h4>
+    <p>This section comes from graphify community clustering. Relationship summary: No high-confidence call edges detected. The diagram prioritizes high-confidence calls or usage relationships; the table keeps the broader node inventory.</p>
+  </div>
+</div>
+<hr>
+
+<h2 id="hyperedges">Group Relationships (Hyperedges)</h2>
+<div class="grid">
+
+  <div class="card">
+    <h4>System Architecture</h4>
+    <p><code>participate_in</code> — 3 participants</p>
+    <ul>
+      <li><code>docker_compose_app</code></li>
+      <li><code>backend_requirements</code></li>
+      <li><code>frontend_index</code></li>
+    </ul>
+  </div>
+</div>
+<hr>
+<h2 id="stats">Project Statistics</h2>
+
+<div class="grid">
+  <div class="card">
+    <h4>Graph</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><td>Nodes</td><td>172</td></tr>
+      <tr><td>Edges</td><td>355</td></tr>
+      <tr><td>Hyperedges</td><td>1</td></tr>
+      <tr><td>Communities</td><td>14</td></tr>
+      <tr><td>Documented Sections</td><td>9</td></tr>
+    </table>
+  </div>
+  <div class="card">
+    <h4>Edge Confidence</h4>
+    <table style="width:100%;font-size:0.85rem;">
+      <tr><td>EXTRACTED</td><td>330</td></tr>
+      <tr><td>INFERRED</td><td>25</td></tr>
+      <tr><td>AMBIGUOUS</td><td>0</td></tr>
+    </table>
+  </div>
+</div>
+
+<div style="text-align:center; padding:40px 0; color: var(--muted); font-size:0.9rem;">
+  <p>funcionarios_cobranca — Architecture Documentation</p>
+  <p>Generated: 2026-08-05 18:21 UTC · graphify callflow-html</p>
+</div>
+
+</div><!-- .container -->
+
+<script>
+(function () {
+  const mermaidConfig = {
+    startOnLoad: false,
+    theme: 'dark',
+    securityLevel: 'loose',
+    flowchart: { htmlLabels: true, useMaxWidth: true },
+    themeVariables: {
+      primaryColor: '#1e293b',
+      primaryTextColor: '#e2e8f0',
+      primaryBorderColor: '#38bdf8',
+      secondaryColor: '#0f172a',
+      tertiaryColor: '#334155',
+      lineColor: '#64748b',
+      textColor: '#e2e8f0',
+    }
+  };
+
+  mermaid.initialize(mermaidConfig);
+
+  function clamp(value, min, max) {
+    return Math.min(max, Math.max(min, value));
+  }
+
+  function enhanceMermaidDiagrams() {
+    document.querySelectorAll('.mermaid').forEach((container) => {
+      if (container.dataset.zoomReady === 'true') return;
+      const svg = container.querySelector('svg');
+      if (!svg) return;
+
+      container.dataset.zoomReady = 'true';
+      container.classList.add('is-enhanced');
+
+      const viewport = document.createElement('div');
+      viewport.className = 'mermaid-viewport';
+      svg.parentNode.insertBefore(viewport, svg);
+      viewport.appendChild(svg);
+
+      const toolbar = document.createElement('div');
+      toolbar.className = 'mermaid-toolbar';
+      toolbar.innerHTML = [
+        '<button type="button" data-action="zoom-out" title="Zoom out">-</button>',
+        '<span class="zoom-level" data-role="level">100%</span>',
+        '<button type="button" data-action="zoom-in" title="Zoom in">+</button>',
+        '<button type="button" data-action="fit" title="Fit width">Fit</button>',
+        '<button type="button" data-action="reset" title="Reset view">Reset</button>'
+      ].join('');
+      container.insertBefore(toolbar, viewport);
+
+      const state = { scale: 1, x: 0, y: 0, dragging: false, startX: 0, startY: 0, originX: 0, originY: 0 };
+      const level = toolbar.querySelector('[data-role="level"]');
+
+      function applyTransform() {
+        svg.style.transform = `translate(${state.x}px, ${state.y}px) scale(${state.scale})`;
+        level.textContent = `${Math.round(state.scale * 100)}%`;
+      }
+
+      function zoomBy(delta) {
+        state.scale = clamp(state.scale + delta, 0.25, 3);
+        applyTransform();
+      }
+
+      function reset() {
+        state.scale = 1;
+        state.x = 0;
+        state.y = 0;
+        applyTransform();
+      }
+
+      function fitWidth() {
+        const rawWidth = svg.viewBox && svg.viewBox.baseVal && svg.viewBox.baseVal.width
+          ? svg.viewBox.baseVal.width
+          : svg.getBoundingClientRect().width / state.scale;
+        if (!rawWidth) {
+          reset();
+          return;
+        }
+        state.scale = clamp((viewport.clientWidth - 48) / rawWidth, 0.25, 1.4);
+        state.x = 0;
+        state.y = 0;
+        applyTransform();
+      }
+
+      toolbar.addEventListener('click', (event) => {
+        const button = event.target.closest('button[data-action]');
+        if (!button) return;
+        const action = button.dataset.action;
+        if (action === 'zoom-in') zoomBy(0.15);
+        if (action === 'zoom-out') zoomBy(-0.15);
+        if (action === 'fit') fitWidth();
+        if (action === 'reset') reset();
+      });
+
+      viewport.addEventListener('wheel', (event) => {
+        if (!event.ctrlKey && !event.metaKey) return;
+        event.preventDefault();
+        zoomBy(event.deltaY < 0 ? 0.1 : -0.1);
+      }, { passive: false });
+
+      viewport.addEventListener('pointerdown', (event) => {
+        if (event.button !== 0) return;
+        state.dragging = true;
+        state.startX = event.clientX;
+        state.startY = event.clientY;
+        state.originX = state.x;
+        state.originY = state.y;
+        viewport.classList.add('is-dragging');
+        viewport.setPointerCapture(event.pointerId);
+      });
+
+      viewport.addEventListener('pointermove', (event) => {
+        if (!state.dragging) return;
+        state.x = state.originX + event.clientX - state.startX;
+        state.y = state.originY + event.clientY - state.startY;
+        applyTransform();
+      });
+
+      function endDrag(event) {
+        if (!state.dragging) return;
+        state.dragging = false;
+        viewport.classList.remove('is-dragging');
+        if (viewport.hasPointerCapture(event.pointerId)) {
+          viewport.releasePointerCapture(event.pointerId);
+        }
+      }
+
+      viewport.addEventListener('pointerup', endDrag);
+      viewport.addEventListener('pointercancel', endDrag);
+      applyTransform();
+    });
+  }
+
+  function renderMermaid() {
+    const result = mermaid.run
+      ? mermaid.run({ querySelector: '.mermaid' })
+      : Promise.resolve();
+    Promise.resolve(result)
+      .then(enhanceMermaidDiagrams)
+      .catch((error) => {
+        console.error('Mermaid render failed:', error);
+        enhanceMermaidDiagrams();
+      });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', renderMermaid);
+  } else {
+    renderMermaid();
+  }
+})();
+</script>
+
+</body>
+</html>
